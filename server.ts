@@ -1512,7 +1512,9 @@ async function startLocalServer() {
 
   // Vite middleware for development (dynamic import — vite is a devDependency)
   if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
-    const { createServer: createViteServer } = await import("vite");
+    // Use opaque module name to prevent Vercel's bundler from tracing vite as a dependency
+    const viteModuleName = "vi" + "te";
+    const { createServer: createViteServer } = await import(/* @vite-ignore */ viteModuleName);
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
