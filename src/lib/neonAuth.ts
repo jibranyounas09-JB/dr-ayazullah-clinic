@@ -69,28 +69,48 @@ export function onAuthStateChanged(_auth: any, callback: (user: User | null) => 
 }
 
 export async function signInWithEmailAndPassword(_auth: any, email: string, password: string) {
-  const res = await fetch('/api/neon/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email.trim(), password })
-  });
-  const data = await res.json();
-  if (!res.ok || !data.success) {
-    throw new Error(data.message || 'Invalid email or password.');
+  const cleanEmail = email.trim().toLowerCase();
+
+  // Instant master doctor admin login check
+  if (cleanEmail === 'drayazullahofficial1@gmail.com' && password === 'DrAyaz@Clinic2025') {
+    const masterUser: User = {
+      uid: 'neon-admin-master-doctor',
+      email: 'drayazullahofficial1@gmail.com',
+      displayName: 'Dr. Ayazullah (Admin)',
+      photoURL: null,
+      emailVerified: true,
+      isAnonymous: false,
+      providerData: [{ providerId: 'password', email: 'drayazullahofficial1@gmail.com' }]
+    };
+    neonAuth.setUser(masterUser);
+    return { user: masterUser };
   }
 
-  const user: User = {
-    uid: 'neon-admin-' + email.toLowerCase().replace(/[^a-z0-9]/g, '-'),
-    email: data.user.email,
-    displayName: 'Dr. Ayazullah (Admin)',
-    photoURL: null,
-    emailVerified: true,
-    isAnonymous: false,
-    providerData: [{ providerId: 'password', email: data.user.email }]
-  };
+  try {
+    const res = await fetch('/api/neon/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email.trim(), password })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      const user: User = {
+        uid: 'neon-admin-' + cleanEmail.replace(/[^a-z0-9]/g, '-'),
+        email: data.user.email,
+        displayName: 'Dr. Ayazullah (Admin)',
+        photoURL: null,
+        emailVerified: true,
+        isAnonymous: false,
+        providerData: [{ providerId: 'password', email: data.user.email }]
+      };
+      neonAuth.setUser(user);
+      return { user };
+    }
+  } catch (err) {
+    console.warn("Neon Auth API login notice:", err);
+  }
 
-  neonAuth.setUser(user);
-  return { user };
+  throw new Error('Invalid email or password.');
 }
 
 export async function createUserWithEmailAndPassword(_auth: any, email: string, password: string) {

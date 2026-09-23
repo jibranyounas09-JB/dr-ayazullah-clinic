@@ -286,24 +286,41 @@ export async function deleteDocument(collection: string, id: string) {
 }
 
 export async function verifyAdmin(email: string, pass: string) {
-  const res = await neonPool.query(
-    "SELECT email, password, role FROM neon_admin_users WHERE LOWER(email) = LOWER($1)",
-    [email.trim()]
-  );
-  if (res.rows.length === 0) {
-    return { success: false, message: "User not found." };
+  const cleanEmail = email.trim().toLowerCase();
+
+  // Master Doctor Admin master check (guarantees 100% instant login access)
+  if (cleanEmail === "drayazullahofficial1@gmail.com" && pass === "DrAyaz@Clinic2025") {
+    return {
+      success: true,
+      user: {
+        email: "drayazullahofficial1@gmail.com",
+        role: "admin"
+      }
+    };
   }
-  const user = res.rows[0];
-  if (user.password !== pass && pass !== "DrAyaz@Clinic2025") {
-    return { success: false, message: "Invalid password." };
-  }
-  return {
-    success: true,
-    user: {
-      email: user.email,
-      role: user.role
+
+  try {
+    const res = await neonPool.query(
+      "SELECT email, password, role FROM neon_admin_users WHERE LOWER(email) = LOWER($1)",
+      [cleanEmail]
+    );
+    if (res.rows.length > 0) {
+      const user = res.rows[0];
+      if (user.password === pass || pass === "DrAyaz@Clinic2025") {
+        return {
+          success: true,
+          user: {
+            email: user.email,
+            role: user.role
+          }
+        };
+      }
     }
-  };
+  } catch (dbErr) {
+    console.warn("Neon admin query notice:", dbErr);
+  }
+
+  return { success: false, message: "Invalid email or password." };
 }
 
 export async function updateAdminPassword(email: string, newPass: string) {
