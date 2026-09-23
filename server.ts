@@ -9,7 +9,7 @@ import nodemailer from "nodemailer";
 import { Resend } from "resend";
 import Groq, { toFile } from "groq-sdk";
 import { GoogleGenAI, Modality, ThinkingLevel } from "@google/genai";
-import { CLINIC_SYSTEM_PROMPT } from "./src/lib/chatbotKnowledge";
+import { CLINIC_SYSTEM_PROMPT } from "./src/lib/chatbotKnowledge.js";
 import { 
   initNeonDatabase, 
   getDocuments, 
@@ -20,7 +20,7 @@ import {
   verifyAdmin,
   updateAdminPassword,
   neonPool
-} from "./src/server/neonDb";
+} from "./src/server/neonDb.js";
 
 // Resend client initialization for transactional emails
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";

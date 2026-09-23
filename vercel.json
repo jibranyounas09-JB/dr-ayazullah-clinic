@@ -9,6 +9,10 @@
       "destination": "/api/test"
     },
     {
+      "source": "/api/neon/(.*)",
+      "destination": "/api/neonRouter"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/index"
     },
