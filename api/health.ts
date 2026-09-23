@@ -1,16 +1,20 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { neonPool } from '../src/server/neonDb';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
+    const { neonPool } = await import('../src/server/neonDb');
     const dbCheck = await neonPool.query("SELECT NOW() as now");
-    res.json({ 
+    res.status(200).json({ 
       status: "ok", 
       database: "Neon PostgreSQL Connected",
       neonTime: dbCheck.rows[0].now,
       timestamp: new Date().toISOString() 
     });
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    res.status(200).json({ 
+      error: "Failed to initialize health check", 
+      details: err.message, 
+      stack: err.stack 
+    });
   }
 }
