@@ -1,0 +1,138 @@
+{
+  "entities": {
+    "Appointment": {
+      "title": "Appointment",
+      "description": "A clinical appointment booking",
+      "type": "object",
+      "properties": {
+        "patientName": { "type": "string", "maxLength": 100 },
+        "patientPhone": { "type": "string", "maxLength": 20 },
+        "patientEmail": { "type": "string", "maxLength": 100 },
+        "patientAge": { "type": "string", "maxLength": 10 },
+        "symptomDuration": { "type": "string", "maxLength": 50 },
+        "painLevel": { "type": "number" },
+        "symptomsDesc": { "type": "string", "maxLength": 2000 },
+        "date": { "type": "string", "maxLength": 50 },
+        "time": { "type": "string", "maxLength": 50 },
+        "category": { "type": "string", "maxLength": 100 },
+        "mode": { "type": "string", "maxLength": 50 },
+        "fee": { "type": "string", "maxLength": 50 },
+        "paymentMethod": { "type": "string", "maxLength": 50 },
+        "transactionId": { "type": "string", "maxLength": 100 },
+        "status": { "type": "string", "enum": ["Pending", "Completed"] },
+        "timestamp": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["patientName", "patientPhone", "date", "time", "category", "mode", "fee", "paymentMethod", "transactionId", "status", "timestamp"]
+    },
+    "LiveStream": {
+      "title": "LiveStream",
+      "description": "A scheduled live stream session",
+      "type": "object",
+      "properties": {
+        "topic": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "platform": { "type": "string", "enum": ["instagram", "tiktok", "facebook"] }
+      },
+      "required": ["topic", "date", "time", "platform"]
+    },
+    "CaseStudy": {
+      "title": "CaseStudy",
+      "description": "A clinical patient case study recovery story and vlog",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "type": { "type": "string" },
+        "patient": { "type": "string" },
+        "desc": { "type": "string" },
+        "duration": { "type": "string" },
+        "img": { "type": "string" },
+        "vlogUrl": { "type": "string" },
+        "fullStory": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["title", "type", "patient", "desc"]
+    },
+    "ScheduleSettings": {
+      "title": "ScheduleSettings",
+      "description": "Global clinical shift schedules, recurring weekly off days, and single day off/custom overrides",
+      "type": "object",
+      "properties": {
+        "morningName": { "type": "string" },
+        "morningSlots": { "type": "array", "items": { "type": "string" } },
+        "afternoonName": { "type": "string" },
+        "afternoonSlots": { "type": "array", "items": { "type": "string" } },
+        "weeklyOffDays": { "type": "array", "items": { "type": "string" } },
+        "dayOverrides": { "type": "object" }
+      }
+    },
+    "InternshipOpportunity": {
+      "title": "InternshipOpportunity",
+      "description": "Clinical internship, fellowship, and observership programs offered by Dr. Ayazullah's clinic",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "track": { "type": "string" },
+        "duration": { "type": "string" },
+        "eligibility": { "type": "string" },
+        "seats": { "type": "string" },
+        "intake": { "type": "string" },
+        "status": { "type": "string" },
+        "description": { "type": "string" },
+        "included": { "type": "array", "items": { "type": "string" } },
+        "stipendOrFee": { "type": "string" },
+        "isFeatured": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "order": { "type": "number" }
+      },
+      "required": ["title", "track", "duration", "description"]
+    },
+    "InternshipApplication": {
+      "title": "InternshipApplication",
+      "description": "Candidacy dossiers submitted by prospective fellows and interns",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "university": { "type": "string" },
+        "graduationYear": { "type": "string" },
+        "cgpa": { "type": "string" },
+        "internshipId": { "type": "string" },
+        "internshipTitle": { "type": "string" },
+        "motivation": { "type": "string" },
+        "subSpecialty": { "type": "string" },
+        "status": { "type": "string" },
+        "submittedAt": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["fullName", "email", "university", "motivation"]
+    }
+  },
+  "firestore": {
+    "settings/{settingId}": {
+      "schema": { "$ref": "#/entities/ScheduleSettings" },
+      "description": "System settings including schedule configuration, shifts, and day off overrides."
+    },
+    "internships/{internshipId}": {
+      "schema": { "$ref": "#/entities/InternshipOpportunity" },
+      "description": "Stores clinical internship and fellowship opportunities."
+    },
+    "internshipApplications/{applicationId}": {
+      "schema": { "$ref": "#/entities/InternshipApplication" },
+      "description": "Stores submitted student candidacy dossiers and applications."
+    },
+    "appointments/{appointmentId}": {
+      "schema": { "$ref": "#/entities/Appointment" },
+      "description": "Stores clinical appointments."
+    },
+    "liveStreams/{streamId}": {
+      "schema": { "$ref": "#/entities/LiveStream" },
+      "description": "Stores scheduled live stream sessions."
+    },
+    "caseStudies/{caseStudyId}": {
+      "schema": { "$ref": "#/entities/CaseStudy" },
+      "description": "Stores clinical case studies with patient details, pictures, and vlogs."
+    }
+  }
+}

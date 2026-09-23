@@ -1,0 +1,97 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    function isAdmin() {
+      return request.auth != null && 
+             'email' in request.auth.token &&
+             request.auth.token.email == 'drayazullahofficial1@gmail.com';
+    }
+    
+    function incoming() { return request.resource.data; }
+    
+    function isValidAppointment(data) {
+      return data.keys().hasAll(['patientName', 'patientPhone', 'date', 'time', 'category', 'mode', 'fee', 'paymentMethod', 'transactionId', 'status', 'timestamp']) &&
+             data.keys().size() <= 16 &&
+             data.patientName is string && data.patientName.size() <= 100 &&
+             data.patientPhone is string && data.patientPhone.size() <= 20 &&
+             ( !('patientEmail' in data) || (data.patientEmail is string && data.patientEmail.size() <= 100) ) &&
+             ( !('patientAge' in data) || (data.patientAge is string && data.patientAge.size() <= 10) ) &&
+             ( !('symptomDuration' in data) || (data.symptomDuration is string && data.symptomDuration.size() <= 50) ) &&
+             ( !('painLevel' in data) || (data.painLevel is number && data.painLevel >= 0 && data.painLevel <= 10) ) &&
+             ( !('symptomsDesc' in data) || (data.symptomsDesc is string && data.symptomsDesc.size() <= 2000) ) &&
+             data.date is string && data.date.size() <= 50 &&
+             data.time is string && data.time.size() <= 50 &&
+             data.category is string && data.category.size() <= 100 &&
+             data.mode is string && data.mode.size() <= 50 &&
+             data.fee is string && data.fee.size() <= 50 &&
+             data.paymentMethod is string && data.paymentMethod.size() <= 50 &&
+             data.transactionId is string && data.transactionId.size() <= 100 &&
+             data.status in ['Pending', 'Verified', 'Completed', 'Cancelled', 'Refund Requested'] &&
+             data.timestamp is string && data.timestamp.size() <= 50;
+    }
+    
+    match /appointments/{appointmentId} {
+      allow read: if true;
+      allow create: if isValidAppointment(incoming());
+      allow update: if (
+        // Admin full update or status update
+        (isAdmin() && (
+          isValidAppointment(incoming()) || 
+          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']) &&
+           request.resource.data.status in ['Pending', 'Verified', 'Completed', 'Cancelled', 'Refund Requested'])
+        )) || 
+        // Patient full update or patient rescheduling/cancellation
+        (!isAdmin() && (
+          (isValidAppointment(incoming()) && 
+           resource.data.transactionId == incoming().transactionId && 
+           resource.data.patientPhone == incoming().patientPhone) ||
+          // Patient rescheduling date, time, category
+          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['date', 'time', 'category']) &&
+           request.resource.data.date is string && request.resource.data.date.size() <= 50 &&
+           request.resource.data.time is string && request.resource.data.time.size() <= 50 &&
+           request.resource.data.category is string && request.resource.data.category.size() <= 100) ||
+          // Patient requesting cancellation / refund
+          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']) &&
+           request.resource.data.status in ['Refund Requested', 'Cancelled'])
+        ))
+      );
+      allow delete: if isAdmin();
+    }
+    
+    match /settings/{docId} {
+      allow read, write: if true;
+    }
+    
+    match /content/{docId} {
+      allow read, write: if true;
+    }
+    
+    match /services/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /testimonials/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /liveStreams/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /caseStudies/{docId} {
+      allow read, write: if true;
+    }
+    
+    match /internships/{docId} {
+      allow read, write: if true;
+    }
+    
+    match /internshipApplications/{docId} {
+      allow read, write: if true;
+    }
+  }
+}

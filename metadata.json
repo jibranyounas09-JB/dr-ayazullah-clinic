@@ -1,0 +1,6 @@
+{
+  "name": "Dr. Ayazullah Physiotherapy and Sports Rehabilitation Clinic",
+  "description": "Dr. Ayazullah Physiotherapy and Sports Rehabilitation Clinic, Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
