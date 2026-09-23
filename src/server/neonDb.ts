@@ -197,6 +197,14 @@ export async function initNeonDatabase() {
   }
 }
 
+let dbInitPromise: Promise<void> | null = null;
+export async function ensureNeonDatabaseInitialized() {
+  if (!dbInitPromise) {
+    dbInitPromise = initNeonDatabase();
+  }
+  return dbInitPromise;
+}
+
 // Queries
 export async function getDocuments(collection: string, options: {
   orderByField?: string;
@@ -204,6 +212,7 @@ export async function getDocuments(collection: string, options: {
   whereField?: string;
   whereValue?: any;
 } = {}) {
+  await ensureNeonDatabaseInitialized();
   let queryText = "SELECT id, data, created_at, updated_at FROM neon_documents WHERE collection = $1";
   const params: any[] = [collection];
 
@@ -235,6 +244,7 @@ export async function getDocuments(collection: string, options: {
 }
 
 export async function getDocument(collection: string, id: string) {
+  await ensureNeonDatabaseInitialized();
   const res = await neonPool.query(
     "SELECT id, data FROM neon_documents WHERE collection = $1 AND id = $2",
     [collection, id]
@@ -247,6 +257,7 @@ export async function getDocument(collection: string, id: string) {
 }
 
 export async function setDocument(collection: string, id: string, data: any, merge: boolean = true) {
+  await ensureNeonDatabaseInitialized();
   if (merge) {
     const existing = await getDocument(collection, id);
     const mergedData = existing ? { ...existing, ...data } : data;
@@ -273,11 +284,13 @@ export async function setDocument(collection: string, id: string, data: any, mer
 }
 
 export async function addDocument(collection: string, data: any) {
+  await ensureNeonDatabaseInitialized();
   const id = data.id || `${collection.slice(0, 4)}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
   return setDocument(collection, id, data, false);
 }
 
 export async function deleteDocument(collection: string, id: string) {
+  await ensureNeonDatabaseInitialized();
   await neonPool.query(
     "DELETE FROM neon_documents WHERE collection = $1 AND id = $2",
     [collection, id]
@@ -286,6 +299,7 @@ export async function deleteDocument(collection: string, id: string) {
 }
 
 export async function verifyAdmin(email: string, pass: string) {
+  await ensureNeonDatabaseInitialized();
   const cleanEmail = email.trim().toLowerCase();
 
   // Master Doctor Admin master check (guarantees 100% instant login access)
@@ -324,6 +338,7 @@ export async function verifyAdmin(email: string, pass: string) {
 }
 
 export async function updateAdminPassword(email: string, newPass: string) {
+  await ensureNeonDatabaseInitialized();
   await neonPool.query(
     "UPDATE neon_admin_users SET password = $1 WHERE LOWER(email) = LOWER($2)",
     [newPass, email.trim()]

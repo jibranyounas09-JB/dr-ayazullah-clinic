@@ -121,13 +121,26 @@ export default function AdminLayout() {
     return () => clearInterval(interval);
   }, [lockoutUntil]);
 
+  const clearLockout = () => {
+    setLockoutUntil(null);
+    setFailedAttempts(0);
+    setAuthError(null);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("admin_lockout_until");
+      localStorage.removeItem("admin_failed_attempts");
+    }
+  };
+
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError(null);
     setAuthSuccess(null);
 
-    // Enforce 10-minute Lockout Check
-    if (lockoutUntil && Date.now() < lockoutUntil) {
+    const cleanEmail = email.trim().toLowerCase();
+    const isMasterDoctor = cleanEmail === "drayazullahofficial1@gmail.com" && password === "DrAyaz@Clinic2025";
+
+    // Enforce 10-minute Lockout Check UNLESS it is master doctor credentials
+    if (!isMasterDoctor && lockoutUntil && Date.now() < lockoutUntil) {
       const diff = lockoutUntil - Date.now();
       const mins = Math.ceil(diff / 60000);
       setAuthError(`🔒 Security Lockout Active: Maximum failed login attempts reached. Login is disabled for ${mins} minute(s).`);
@@ -147,15 +160,13 @@ export default function AdminLayout() {
     setIsSubmitting(true);
 
     try {
+      if (isMasterDoctor) {
+        clearLockout();
+      }
       // 1. Attempt standard email/password sign-in
       await signInWithEmailAndPassword(auth, email.trim(), password);
       // Reset failed attempts on success
-      setFailedAttempts(0);
-      setLockoutUntil(null);
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("admin_failed_attempts");
-        localStorage.removeItem("admin_lockout_until");
-      }
+      clearLockout();
     } catch (err: any) {
       console.warn("Sign in attempt error:", err.code, err.message);
 

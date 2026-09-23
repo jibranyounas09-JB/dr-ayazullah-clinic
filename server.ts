@@ -64,23 +64,28 @@ function getTransporter() {
 
 export const app = express();
 
-async function startServer() {
-  const PORT = Number(process.env.PORT) || 3000;
-
-  const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "cv");
+const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "cv");
+try {
   if (!fs.existsSync(UPLOAD_DIR)) {
     fs.mkdirSync(UPLOAD_DIR, { recursive: true });
   }
+} catch (e) {
+  console.warn("Notice: CV upload directory creation skipped:", e);
+}
 
-  const SLIP_DIR = path.join(process.cwd(), "public", "uploads", "slips");
+const SLIP_DIR = path.join(process.cwd(), "public", "uploads", "slips");
+try {
   if (!fs.existsSync(SLIP_DIR)) {
     fs.mkdirSync(SLIP_DIR, { recursive: true });
   }
+} catch (e) {
+  console.warn("Notice: Slip upload directory creation skipped:", e);
+}
 
-  app.use(express.json({ limit: "50mb" }));
-  app.use(express.urlencoded({ extended: true, limit: "50mb" }));
-  app.use("/uploads", express.static(path.join(process.cwd(), "public", "uploads")));
-  app.use(express.static(path.join(process.cwd(), 'public')));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+app.use("/uploads", express.static(path.join(process.cwd(), "public", "uploads")));
+app.use(express.static(path.join(process.cwd(), 'public')));
 
   // Health check endpoint
   app.get("/api/health", async (_req, res) => {
@@ -1498,6 +1503,9 @@ Feel free to pick a therapy option below or book directly at /book-appointment.`
     }
   });
 
+async function startLocalServer() {
+  const PORT = Number(process.env.PORT) || 3000;
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
     const vite = await createViteServer({
@@ -1525,7 +1533,9 @@ Feel free to pick a therapy option below or book directly at /book-appointment.`
   }
 }
 
-startServer();
+if (!process.env.VERCEL) {
+  startLocalServer();
+}
 
 export default app;
 
