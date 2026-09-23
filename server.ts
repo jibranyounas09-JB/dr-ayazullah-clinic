@@ -3,7 +3,8 @@ import http from "http";
 import path from "path";
 import fs from "fs";
 import "dotenv/config";
-import { createServer as createViteServer } from "vite";
+// vite is imported dynamically in startLocalServer() — it's a devDependency
+// and must NOT be imported at the top level or Vercel serverless will crash.
 import nodemailer from "nodemailer";
 import { Resend } from "resend";
 import Groq, { toFile } from "groq-sdk";
@@ -108,6 +109,36 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
   // --- NEON POSTGRESQL REST API ENDPOINTS ---
 
+  // Auth routes MUST be registered BEFORE generic :collection routes
+  // so Express doesn't match "auth" as a collection name.
+
+  // Admin Authentication against Neon
+  app.post("/api/neon/auth/login", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      const result = await verifyAdmin(email, password);
+      if (!result.success) {
+        return res.status(401).json(result);
+      }
+      res.json(result);
+    } catch (err: any) {
+      console.error("Neon Auth login error:", err);
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // Admin Password Reset against Neon
+  app.post("/api/neon/auth/reset-password", async (req, res) => {
+    try {
+      const { email, newPassword } = req.body;
+      const result = await updateAdminPassword(email, newPassword);
+      res.json(result);
+    } catch (err: any) {
+      console.error("Neon Auth reset password error:", err);
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   // 1. Get collection documents
   app.get("/api/neon/:collection", async (req, res) => {
     try {
@@ -176,33 +207,6 @@ app.use(express.static(path.join(process.cwd(), 'public')));
       res.json(result);
     } catch (err: any) {
       console.error("Neon DELETE document error:", err);
-      res.status(500).json({ error: err.message });
-    }
-  });
-
-  // 6. Admin Authentication against Neon
-  app.post("/api/neon/auth/login", async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      const result = await verifyAdmin(email, password);
-      if (!result.success) {
-        return res.status(401).json(result);
-      }
-      res.json(result);
-    } catch (err: any) {
-      console.error("Neon Auth login error:", err);
-      res.status(500).json({ error: err.message });
-    }
-  });
-
-  // 7. Admin Password Reset against Neon
-  app.post("/api/neon/auth/reset-password", async (req, res) => {
-    try {
-      const { email, newPassword } = req.body;
-      const result = await updateAdminPassword(email, newPassword);
-      res.json(result);
-    } catch (err: any) {
-      console.error("Neon Auth reset password error:", err);
       res.status(500).json({ error: err.message });
     }
   });
@@ -1506,8 +1510,9 @@ Feel free to pick a therapy option below or book directly at /book-appointment.`
 async function startLocalServer() {
   const PORT = Number(process.env.PORT) || 3000;
 
-  // Vite middleware for development
+  // Vite middleware for development (dynamic import — vite is a devDependency)
   if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
