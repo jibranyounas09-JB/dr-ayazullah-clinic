@@ -62,9 +62,10 @@ function getTransporter() {
   return transporter;
 }
 
+export const app = express();
+
 async function startServer() {
-  const app = express();
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT) || 3000;
 
   const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "cv");
   if (!fs.existsSync(UPLOAD_DIR)) {
@@ -1498,29 +1499,33 @@ Feel free to pick a therapy option below or book directly at /book-appointment.`
   });
 
   // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
     app.use(vite.middlewares);
-  } else {
+  } else if (!process.env.VERCEL) {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
-    app.get('*all', (req, res) => {
+    app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }
 
-  const httpServer = http.createServer(app);
+  if (!process.env.VERCEL) {
+    const httpServer = http.createServer(app);
 
-  httpServer.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-    initNeonDatabase().catch((err) => {
-      console.error("Neon DB startup error:", err.message);
+    httpServer.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+      initNeonDatabase().catch((err) => {
+        console.error("Neon DB startup error:", err.message);
+      });
     });
-  });
+  }
 }
 
 startServer();
+
+export default app;
 
