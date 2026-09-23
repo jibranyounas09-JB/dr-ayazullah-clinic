@@ -1,26 +1,17 @@
-// Vercel Serverless Entry Point for Dr. Ayazullah Clinic API
-// Wraps the Express app import to catch and report errors
-
-let app: any = null;
-let importError: string | null = null;
-
-try {
-  // Dynamic import to catch module-level errors
-  const serverModule = require("../server");
-  app = serverModule.default || serverModule.app || serverModule;
-} catch (err: any) {
-  importError = err?.message || String(err);
-  console.error("FATAL: Failed to import server.ts:", importError);
-  console.error("Stack:", err?.stack);
-}
-
-export default function handler(req: any, res: any) {
-  if (importError || !app) {
-    return res.status(500).json({
+export default async function handler(req: any, res: any) {
+  try {
+    const serverModule = await import("../server");
+    const app = serverModule.default || serverModule.app || serverModule;
+    if (!app) {
+      throw new Error("No app exported from server.ts");
+    }
+    return app(req, res);
+  } catch (err: any) {
+    console.error("FATAL: Failed to import server.ts:", err);
+    return res.status(200).json({
       error: "Server module failed to load",
-      details: importError,
-      hint: "Check server.ts imports and module-level code"
+      details: err?.message || String(err),
+      stack: err?.stack,
     });
   }
-  return app(req, res);
 }
