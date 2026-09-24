@@ -219,6 +219,7 @@ export default function AdminSettings() {
       case "wallet": return "account_balance_wallet";
       case "raast": return "qr_code_2";
       case "qr": return "qr_code_scanner";
+      case "cash": return "payments";
       default: return "payments";
     }
   };
@@ -502,6 +503,7 @@ export default function AdminSettings() {
                     <option value="bank">Bank Transfer (Meezan, HBL, Allied, etc.)</option>
                     <option value="raast">Raast Instant Transfer</option>
                     <option value="qr">QR Code Scan &amp; Pay</option>
+                    <option value="cash">Cash at Clinic</option>
                     <option value="other">Other Payment Gateway</option>
                   </select>
                 </div>
@@ -518,7 +520,7 @@ export default function AdminSettings() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="font-label-sm font-semibold">Account / Mobile Number / Raast ID *</label>
+                  <label className="font-label-sm font-semibold">Account / Mobile Number / Raast ID {methodForm.type !== "cash" ? "*" : "(Optional)"}</label>
                   <input
                     type="text"
                     value={methodForm.accountNumber || ""}

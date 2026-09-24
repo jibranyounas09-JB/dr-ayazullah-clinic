@@ -1,7 +1,7 @@
 export interface PaymentMethodConfig {
   id: string;
   name: string;           // e.g. "Easypaisa", "JazzCash", "Meezan Bank", "Raast", "SadaPay"
-  type: "wallet" | "bank" | "raast" | "qr" | "other"; 
+  type: "wallet" | "bank" | "raast" | "qr" | "cash" | "other"; 
   accountTitle: string;    // e.g. "Dr Ayazullah"
   accountNumber: string;   // Mobile No, Account No, or Raast ID
   bankName?: string;       // e.g. "Meezan Bank" (optional for wallets/raast)
@@ -50,6 +50,14 @@ export const DEFAULT_PAYMENT_METHODS: PaymentMethodConfig[] = [
     accountNumber: "03329895770",
     qrImageUrl: "/image.png",
     instructions: "Zero-fee instant transfer via Raast ID or scan QR code.",
+  },
+  {
+    id: "pay-cash",
+    name: "Cash at Clinic",
+    type: "cash",
+    accountTitle: "Pay in Person",
+    accountNumber: "N/A",
+    instructions: "Book your appointment online and pay the fee in cash when you arrive at the clinic.",
     isActive: true
   }
 ];

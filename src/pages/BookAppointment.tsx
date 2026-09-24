@@ -548,6 +548,7 @@ export default function BookAppointment() {
                        if (m.type === "bank") icon = "account_balance";
                        else if (m.type === "raast") icon = "qr_code_2";
                        else if (m.type === "qr") icon = "qr_code_scanner";
+                       else if (m.type === "cash") icon = "payments";
 
                        return (
                          <button
@@ -624,23 +625,25 @@ export default function BookAppointment() {
                      );
                   })()}
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md pt-space-xs">
-                     <div className="flex flex-col gap-1.5">
-                       <label className="font-label-md text-label-md text-on-surface font-semibold" htmlFor="txId">Transaction ID / Reference No. *</label>
-                       <input className="w-full h-12 px-space-sm rounded-lg bg-surface-container-low text-on-surface placeholder:text-outline font-body-md focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="txId" placeholder="e.g., 123456789012" type="text" value={transactionId} onChange={(e) => { setTransactionId(e.target.value); setFormError(""); }} />
-                     </div>
-                     <div className="flex flex-col gap-1.5">
-                       <label className="font-label-md text-label-md text-on-surface font-semibold">Upload Script of Transfer (Receipt) *</label>
-                       <div className="flex items-center justify-center h-12 px-space-sm rounded-lg bg-surface-container-low border border-dashed border-outline-variant hover:border-primary transition-colors cursor-pointer relative">
-                         <input className="absolute inset-0 opacity-0 cursor-pointer w-full" type="file" accept="image/*,.pdf" onChange={(e) => {
-                           const file = e.target.files?.[0];
-                           if (file) { setReceiptName(file.name); setFormError(""); }
-                         }} />
-                         <span className="material-symbols-outlined text-primary mr-2 text-[20px]">receipt_long</span>
-                         <span className="font-body-md text-on-surface-variant truncate pr-4">{receiptName || "Click to attach receipt image"}</span>
+                  {paymentMethods.find(m => m.id === selectedMethodId || m.name === paymentMethod)?.type !== 'cash' && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md pt-space-xs">
+                       <div className="flex flex-col gap-1.5">
+                         <label className="font-label-md text-label-md text-on-surface font-semibold" htmlFor="txId">Transaction ID / Reference No. *</label>
+                         <input className="w-full h-12 px-space-sm rounded-lg bg-surface-container-low text-on-surface placeholder:text-outline font-body-md focus:outline-none focus:ring-2 focus:ring-primary transition-all" id="txId" placeholder="e.g., 123456789012" type="text" value={transactionId} onChange={(e) => { setTransactionId(e.target.value); setFormError(""); }} />
                        </div>
-                     </div>
-                  </div>
+                       <div className="flex flex-col gap-1.5">
+                         <label className="font-label-md text-label-md text-on-surface font-semibold">Upload Script of Transfer (Receipt) *</label>
+                         <div className="flex items-center justify-center h-12 px-space-sm rounded-lg bg-surface-container-low border border-dashed border-outline-variant hover:border-primary transition-colors cursor-pointer relative">
+                           <input className="absolute inset-0 opacity-0 cursor-pointer w-full" type="file" accept="image/*,.pdf" onChange={(e) => {
+                             const file = e.target.files?.[0];
+                             if (file) { setReceiptName(file.name); setFormError(""); }
+                           }} />
+                           <span className="material-symbols-outlined text-primary mr-2 text-[20px]">receipt_long</span>
+                           <span className="font-body-md text-on-surface-variant truncate pr-4">{receiptName || "Click to attach receipt image"}</span>
+                         </div>
+                       </div>
+                    </div>
+                  )}
 
                 </div>
               </div>
@@ -728,7 +731,8 @@ export default function BookAppointment() {
                     setFormError("Please provide your Name and WhatsApp/Mobile number.");
                     return;
                   }
-                  if (!transactionId.trim() || !receiptName) {
+                  const isCash = paymentMethods.find(m => m.id === selectedMethodId || m.name === paymentMethod)?.type === 'cash';
+                  if (!isCash && (!transactionId.trim() || !receiptName)) {
                     setFormError("Please provide your Transaction ID and upload the transfer receipt.");
                     return;
                   }
