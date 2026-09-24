@@ -47,6 +47,12 @@ export default function BookAppointment() {
           if (!methods || !Array.isArray(methods) || methods.length === 0) {
             methods = DEFAULT_PAYMENT_METHODS;
           }
+          // Ensure "Cash at Clinic" method is always available even if DB has older data
+          const hasCash = methods.some(m => m.type === 'cash');
+          if (!hasCash) {
+            const defaultCash = DEFAULT_PAYMENT_METHODS.find(m => m.type === 'cash');
+            if (defaultCash) methods = [...methods, defaultCash];
+          }
           const activeMethods = methods.filter(m => m.isActive !== false);
           setPaymentMethods(activeMethods);
           if (activeMethods.length > 0) {
@@ -577,6 +583,27 @@ export default function BookAppointment() {
                      const currentMethod = paymentMethods.find(m => m.id === selectedMethodId || m.name === paymentMethod) || paymentMethods[0];
                      if (!currentMethod) return null;
 
+                     // Special display for Cash at Clinic
+                     if (currentMethod.type === 'cash') {
+                       return (
+                         <div className="bg-gradient-to-br from-primary/5 to-secondary/5 p-space-md rounded-xl border-2 border-primary/20 flex flex-col items-center text-center gap-3">
+                           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                             <span className="material-symbols-outlined text-primary text-[36px]">payments</span>
+                           </div>
+                           <div>
+                             <h3 className="font-headline-sm text-headline-sm font-bold text-on-surface">Cash Payment at Clinic</h3>
+                             <p className="font-body-sm text-body-sm text-on-surface-variant mt-1 max-w-md">
+                               {currentMethod.instructions || "Book your appointment online and pay the fee in cash when you arrive at the clinic."}
+                             </p>
+                           </div>
+                           <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
+                             <span className="material-symbols-outlined text-primary text-[18px]">info</span>
+                             <span className="font-label-sm text-label-sm text-primary font-semibold">No advance transfer required — pay {currentFee} at reception</span>
+                           </div>
+                         </div>
+                       );
+                     }
+
                      return (
                        <div className="bg-surface-container p-space-sm rounded-lg flex flex-col md:flex-row gap-4 font-body-sm text-on-surface items-start">
                          <div className="flex flex-col gap-1.5 w-full flex-1">
@@ -700,7 +727,7 @@ export default function BookAppointment() {
                     <span className="text-primary font-semibold">{paymentMethod}</span>
                   </div>
                   <div className="flex items-center justify-between font-headline-sm text-headline-sm text-on-surface pt-space-xs font-bold">
-                    <span>Total Pre-Paid:</span>
+                    <span>{paymentMethods.find(m => m.id === selectedMethodId || m.name === paymentMethod)?.type === 'cash' ? 'Pay at Clinic:' : 'Total Pre-Paid:'}</span>
                     <span className="text-primary">{currentFee}</span>
                   </div>
                 </div>

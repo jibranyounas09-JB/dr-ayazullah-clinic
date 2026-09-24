@@ -50,6 +50,7 @@ export const DEFAULT_PAYMENT_METHODS: PaymentMethodConfig[] = [
     accountNumber: "03329895770",
     qrImageUrl: "/image.png",
     instructions: "Zero-fee instant transfer via Raast ID or scan QR code.",
+    isActive: true
   },
   {
     id: "pay-cash",

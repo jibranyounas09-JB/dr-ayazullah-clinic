@@ -81,6 +81,12 @@ export default function AdminSettings() {
           if (!methods || !Array.isArray(methods) || methods.length === 0) {
             methods = DEFAULT_PAYMENT_METHODS;
           }
+          // Ensure "Cash at Clinic" method is always available even if DB has older data
+          const hasCash = methods.some(m => m.type === 'cash');
+          if (!hasCash) {
+            const defaultCash = DEFAULT_PAYMENT_METHODS.find(m => m.type === 'cash');
+            if (defaultCash) methods = [...methods, defaultCash];
+          }
 
           setSettings(prev => ({ 
             ...prev, 
