@@ -6,7 +6,7 @@
 
   <!-- Home Page -->
   <url>
-    <loc>https://drayazullah.com/</loc>
+    <loc>https://dr-ayazullah-clinic.vercel.app/</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.00</priority>
@@ -14,7 +14,7 @@
 
   <!-- Book Appointment Page -->
   <url>
-    <loc>https://drayazullah.com/book-appointment</loc>
+    <loc>https://dr-ayazullah-clinic.vercel.app/book-appointment</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
@@ -22,7 +22,7 @@
 
   <!-- Contact Us & Location -->
   <url>
-    <loc>https://drayazullah.com/contact-us</loc>
+    <loc>https://dr-ayazullah-clinic.vercel.app/contact-us</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
@@ -30,7 +30,7 @@
 
   <!-- Clinical Internship & Academy -->
   <url>
-    <loc>https://drayazullah.com/internship-academy</loc>
+    <loc>https://dr-ayazullah-clinic.vercel.app/internship-academy</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
@@ -38,7 +38,7 @@
 
   <!-- Patient Video Testimonials -->
   <url>
-    <loc>https://drayazullah.com/video-testimonials</loc>
+    <loc>https://dr-ayazullah-clinic.vercel.app/video-testimonials</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.70</priority>
@@ -46,7 +46,7 @@
 
   <!-- Community Health Hub & Social -->
   <url>
-    <loc>https://drayazullah.com/community-and-social</loc>
+    <loc>https://dr-ayazullah-clinic.vercel.app/community-and-social</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.70</priority>
@@ -54,7 +54,7 @@
 
   <!-- Manage Booking -->
   <url>
-    <loc>https://drayazullah.com/manage-booking</loc>
+    <loc>https://dr-ayazullah-clinic.vercel.app/manage-booking</loc>
     <lastmod>2026-09-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.60</priority>

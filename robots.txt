@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://drayazullah.com/sitemap.xml
+Sitemap: https://dr-ayazullah-clinic.vercel.app/sitemap.xml
