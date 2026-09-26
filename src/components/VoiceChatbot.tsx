@@ -1842,11 +1842,12 @@ Contact me today to schedule a consultation!`;
 
           <div className="px-3 py-1.5 bg-slate-50 border-t border-slate-200 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
             {[
-              { label: "🩺 I want to book therapy", prompt: "I want to book therapy" },
-              { label: "🇵🇰 مجھے تھراپی بک کرنی ہے", prompt: "مجھے تھراپی بک کرنی ہے" },
+              { label: "❓ Recommend therapy for my symptoms", prompt: "I am having pain. Can you recommend which therapy is best for me?" },
+              { label: "🇵🇰 مجھے کون سی تھراپی کروانی چاہیے؟", prompt: "میری کمر میں شدید درد ہے اور مجھ سے چلا نہیں جا رہا، مجھے بتائیں کہ مجھے کون سی تھراپی کروانی چاہیے؟" },
+              { label: "🩺 Book therapy", prompt: "I want to book therapy" },
               { label: "📅 Wednesday Therapy", prompt: "I want to book my therapy on Wednesday" },
               { label: "🔍 Check My Booking", prompt: "How do I check my appointment status and download my slip?" },
-              { label: "📍 Clinic Location & Fee", prompt: "Where is the clinic located in Islamabad and what is the fee?" }
+              { label: "📍 Location & Fee", prompt: "Where is the clinic located in Islamabad and what is the fee?" }
             ].map((chip, idx) => (
               <button
                 key={idx}
