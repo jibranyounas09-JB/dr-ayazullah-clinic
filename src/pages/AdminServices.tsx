@@ -133,8 +133,8 @@ export default function AdminServices() {
                <button onClick={async () => {
                  const defaults = [
                    { title: "Spine & Disc Restoration", description: "Non-surgical decompression for sciatica, herniated discs, and chronic lumbar facet strain. Regain structural alignment.", price: "PKR 4,500", icon: "accessibility_new", order: 0 },
-                   { title: "Sports Injury & Athletics", description: "ACL/PCL tear protocols, rotator cuff impingement resolution, and biomechanical return-to-play screening.", price: "PKR 4,000", icon: "sprint", order: 1 },
-                   { title: "Dry Needling & Myofascial", description: "Targeted intramuscular trigger point deactivation for tension headache relief, spasms, and deep fascia relaxation.", price: "PKR 3,500", icon: "pin_invoke", order: 2 }
+                   { title: "Sports injury rehabilitation", description: "ACL/PCL tear protocols, rotator cuff impingement resolution, and biomechanical return-to-play screening.", price: "PKR 4,000", icon: "sprint", order: 1 },
+                   { title: "Dry Needling & Myofascial pain treatment", description: "Targeted intramuscular trigger point deactivation for tension headache relief, spasms, and deep fascia relaxation.", price: "PKR 3,500", icon: "pin_invoke", order: 2 }
                  ];
                  for (const def of defaults) {
                    await addDoc(collection(db, "services"), def);

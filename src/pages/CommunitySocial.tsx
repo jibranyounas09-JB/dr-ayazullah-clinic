@@ -92,7 +92,7 @@ export default function CommunitySocial() {
                 Experience our holistic clinical care outside clinic walls. Join Dr. Ayazullah's active rehabilitation channels for daily ergonomic micro-habits, acute spasm triage, and compassionate peer support.
               </p>
               <div className="flex flex-wrap items-center gap-space-sm pt-space-xs">
-                <a className="inline-flex items-center gap-space-xs px-space-lg py-space-sm rounded-full bg-primary text-on-primary font-label-lg text-label-lg shadow-sm hover:scale-[1.01] transition-transform" href="https://wa.me/923001234567" target="_blank" rel="noreferrer">
+                <a className="inline-flex items-center gap-space-xs px-space-lg py-space-sm rounded-full bg-primary text-on-primary font-label-lg text-label-lg shadow-sm hover:scale-[1.01] transition-transform" href="https://wa.me/923329895770" target="_blank" rel="noreferrer">
                   <span className="material-symbols-outlined text-[20px]">chat</span>
                   <span>Launch Instant WhatsApp Triage</span>
                 </a>
@@ -126,7 +126,7 @@ export default function CommunitySocial() {
                 </div>
                 <div className="flex flex-col">
                   <span className="font-label-lg text-label-lg text-on-surface font-bold">Evidence-Based Guides</span>
-                  <span className="font-body-sm text-body-sm text-on-surface-variant">Reviewed weekly by MS-OMPT certified specialists</span>
+                  <span className="font-body-sm text-body-sm text-on-surface-variant">Reviewed weekly by DPT (IU) certified clinical specialists</span>
                 </div>
               </div>
             </div>

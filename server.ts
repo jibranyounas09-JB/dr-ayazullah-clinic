@@ -940,20 +940,58 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
   // --- GROQ AI VOICE & CHATBOT API ENDPOINTS ---
   const GROQ_API_KEY = process.env.GROQ_API_KEY || "";
-  let groqClient: Groq | null = null;
-  function getGroqClient(): Groq {
-    if (!groqClient) {
-      groqClient = new Groq({ apiKey: process.env.GROQ_API_KEY || GROQ_API_KEY });
+
+  async function getEffectiveGroqKey(reqKey?: string): Promise<string> {
+    if (reqKey && typeof reqKey === "string" && reqKey.trim().length > 10) {
+      return reqKey.trim();
     }
-    return groqClient;
+    if (process.env.GROQ_API_KEY && process.env.GROQ_API_KEY.trim().length > 10) {
+      return process.env.GROQ_API_KEY.trim();
+    }
+    if (process.env.VITE_GROQ_API_KEY && process.env.VITE_GROQ_API_KEY.trim().length > 10) {
+      return process.env.VITE_GROQ_API_KEY.trim();
+    }
+    try {
+      const genSettings = await getDocument("settings", "general");
+      if (genSettings && genSettings.groqApiKey && typeof genSettings.groqApiKey === "string" && genSettings.groqApiKey.trim().length > 10) {
+        return genSettings.groqApiKey.trim();
+      }
+    } catch (e) {}
+    return "";
+  }
+
+  async function getEffectiveGeminiKey(reqKey?: string): Promise<string> {
+    if (reqKey && typeof reqKey === "string" && reqKey.trim().length > 10 && !reqKey.startsWith("AQ.")) {
+      return reqKey.trim();
+    }
+    if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim().length > 10 && !process.env.GEMINI_API_KEY.startsWith("AQ.")) {
+      return process.env.GEMINI_API_KEY.trim();
+    }
+    if (process.env.VITE_GEMINI_API_KEY && process.env.VITE_GEMINI_API_KEY.trim().length > 10 && !process.env.VITE_GEMINI_API_KEY.startsWith("AQ.")) {
+      return process.env.VITE_GEMINI_API_KEY.trim();
+    }
+    try {
+      const genSettings = await getDocument("settings", "general");
+      if (genSettings && genSettings.geminiApiKey && typeof genSettings.geminiApiKey === "string" && genSettings.geminiApiKey.trim().length > 10 && !genSettings.geminiApiKey.startsWith("AQ.")) {
+        return genSettings.geminiApiKey.trim();
+      }
+    } catch (e) {}
+    return "";
   }
 
   // 1. Whisper Speech-To-Text Endpoint via Groq (Supports Urdu, Pashto, English)
   app.post("/api/ai/transcribe", async (req, res) => {
     try {
-      const { audioData, mimeType, language } = req.body;
+      const { audioData, mimeType, language, groqApiKey: reqGroqKey } = req.body;
       if (!audioData) {
         return res.status(400).json({ error: "Missing audioData payload" });
+      }
+
+      const activeGroqKey = await getEffectiveGroqKey(reqGroqKey || (req.headers["x-groq-api-key"] as string));
+      if (!activeGroqKey) {
+        return res.status(400).json({ 
+          error: "Groq API Key is not configured. Please set GROQ_API_KEY or configure it in Admin Settings." 
+        });
       }
 
       const base64Content = typeof audioData === "string" && audioData.includes(";base64,")
@@ -965,7 +1003,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
         return res.status(400).json({ error: "Audio snippet is too short. Please speak clearly into your microphone." });
       }
 
-      const groq = getGroqClient();
+      const groq = new Groq({ apiKey: activeGroqKey });
       let safeMime = mimeType || "audio/webm";
       if (safeMime.includes("webm")) safeMime = "audio/webm"; // Strip codecs string
       const ext = safeMime.includes("wav") ? "wav" : safeMime.includes("mp4") ? "m4a" : "webm";
@@ -980,21 +1018,21 @@ app.use(express.static(path.join(process.cwd(), 'public')));
         temperature: 0.1
       });
 
-      console.log(`[Groq Whisper STT] Transcribed: "${transcription.text}"`);
+      console.log(`[Groq Whisper STT SUCCESS] Transcribed: "${transcription.text}"`);
       res.json({
         success: true,
         text: (transcription.text || "").trim()
       });
     } catch (err: any) {
-      console.error("[Groq Whisper Transcription Error]:", err);
+      console.error("[Groq Whisper Transcription Error]:", err.message || err);
       res.status(500).json({ error: err.message || "Failed to transcribe audio" });
     }
   });
 
-  // 2. Chatbot Logic Engine via Google Gemini (gemini-3.8-flash) with specialized Multilingual & Clinical Intelligence
+  // 2. Chatbot Logic Engine via Llama 3 / Groq & Google Gemini with specialized Multilingual & Clinical Intelligence
   app.post("/api/ai/chat", async (req, res) => {
     try {
-      const { messages, userLanguage, consultationFee: clientFee, servicesList } = req.body;
+      const { messages, userLanguage, consultationFee: clientFee, servicesList, groqApiKey: reqGroqKey, geminiApiKey: reqGeminiKey } = req.body;
       if (!Array.isArray(messages) || messages.length === 0) {
         return res.status(400).json({ error: "Messages array is required" });
       }
@@ -1035,7 +1073,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
         }
       }
 
-      // Language instruction guidance tailored for Google Gemini
+      // Language instruction guidance tailored for AI engines
       let langInstruction = "";
       if (effectiveLang === "ur") {
         langInstruction = `
@@ -1052,6 +1090,7 @@ CRITICAL URDU LANGUAGE DIRECTIVE:
   * پتہ: آفس نمبر 12، پہلی منزل، پاک لینڈ پلازہ، جی ایٹ مرکز (G-8 Markaz)، اسلام آباد
   * اوقات: پیر تا ہفتہ، صبح 10:00 بجے سے رات 08:00 بجے تک (اتوار چھٹی)
   * خصوصی دن: بدھ (Wednesday) ڈاکٹر ایاز اللہ کا خاص کلینیکل دن ہے
+  * فون / واٹس ایپ: +92 332 9895770 (0332 9895770)
   * ادائیگی: جاز کیش (03175309414 - عنوان: AYAZ ULLAH) اور میزان بینک (00300112565418 - عنوان: AYAZULLAH)
 - Inform the patient that they can choose therapy and slots directly using the interactive booking menu below in this chat, or visit /book-appointment, or check their booking at /manage-booking.
 `;
@@ -1070,6 +1109,7 @@ CRITICAL PASHTO LANGUAGE DIRECTIVE:
   * پته: دفتر نمبر ۱۲، لومړی پوړ، پاک لینډ پلازه، جي اېټ مرکز (G-8 Markaz)، اسلام آباد
   * وختونه: د ګل نه تر خالي ورځې، د سهار ۱۰:۰۰ نه د ماښام تر ۰۸:۰۰ بجو پورې (یکشنبه رخصت دی)
   * د ډاکټر ایازالله ځانګړې ورځ: د شورو ورځ (Wednesday)
+  * تیلیفون / واټس اپ: +92 332 9895770 (0332 9895770)
   * د پیسو لېږلو حسابونه: جاز کیش (03175309414 - نوم: AYAZ ULLAH) او میزان بینک (00300112565418 - نوم: AYAZULLAH)
 - Inform the patient that they can pick their therapy and slot using the interactive menu right below in the chat, or check their appointment at /manage-booking.
 `;
@@ -1077,7 +1117,7 @@ CRITICAL PASHTO LANGUAGE DIRECTIVE:
         langInstruction = `
 ENGLISH LANGUAGE DIRECTIVE:
 - The user has selected English. Respond clearly, warmly, and professionally in English.
-- Highlight Dr. Ayazullah's credentials (3.5+ years, 14,000+ recoveries), ${formattedFee} consultation fee, Wednesday clinical day, G-8 Markaz Islamabad location, and the interactive in-chat booking menu below.
+- Highlight Dr. Ayazullah's credentials (3.5+ years, 14,000+ recoveries), ${formattedFee} consultation fee, Wednesday clinical day, G-8 Markaz Islamabad location, Contact number +92 332 9895770, and the interactive in-chat booking menu below.
 `;
       } else {
         langInstruction = "\nDetect the language the patient uses (English, Urdu, or Pashto) and respond in that exact same language.";
@@ -1095,7 +1135,7 @@ IMPORTANT BOOKING & FEES INTERACTIVE WORKFLOW:
   2. Highlight the dynamic therapy programs configured by our clinic:
 ${servicesOverviewText}
   3. Share available time slots: Morning (09:30 AM - 11:30 AM), Afternoon (02:30 PM - 04:30 PM), Evening (05:30 PM - 07:30 PM). Featured day: Wednesday (Dr. Ayazullah's main clinical day).
-  4. Explain payment options: JazzCash (03175309414), Meezan Bank (00300112565418), or EasyPaisa (03329895770).
+  4. Explain payment options: JazzCash (03175309414), Meezan Bank (00300112565418), or EasyPaisa (03329895770). Clinic phone: +92 332 9895770.
   5. Remind the patient that they can directly use the Interactive Booking Menu located right below this chat window to pick their therapy, choose date & slot, and submit their booking!`;
       }
 
@@ -1129,46 +1169,54 @@ ${servicesOverviewText}
       let aiResponseText = "";
       let usedModel = "";
 
-      // 1. PRIMARY: Groq AI Models (llama-3.3-70b-versatile, llama-3.1-8b-instant, mixtral-8x7b-32768)
+      // 1. PRIMARY: Groq AI Models (Llama 3.3 70B, Llama 3.1 8B, Mixtral) with dynamic API Key resolution
+      const currentGroqKey = await getEffectiveGroqKey(reqGroqKey || (req.headers["x-groq-api-key"] as string));
       const groqCandidateModels = [
         "llama-3.3-70b-versatile",
         "llama-3.1-8b-instant",
-        "mixtral-8x7b-32768"
+        "llama-3.2-3b-preview",
+        "llama3-70b-8192",
+        "llama3-8b-8192",
+        "mixtral-8x7b-32768",
+        "gemma2-9b-it"
       ];
 
-      for (const modelName of groqCandidateModels) {
-        try {
-          console.log(`[Groq Chat] Querying ${modelName}...`);
-          const groq = getGroqClient();
-          const groqHistory = [
-            { role: "system", content: fullSystemInstruction },
-            ...messages.slice(-10).map((m: any) => ({
-              role: m.role === "user" ? "user" : "assistant",
-              content: m.content || ""
-            }))
-          ];
+      if (currentGroqKey) {
+        for (const modelName of groqCandidateModels) {
+          try {
+            console.log(`[Groq AI Chat] Querying model ${modelName}...`);
+            const groq = new Groq({ apiKey: currentGroqKey });
+            const groqHistory = [
+              { role: "system", content: fullSystemInstruction },
+              ...messages.slice(-10).map((m: any) => ({
+                role: m.role === "user" ? "user" : "assistant",
+                content: m.content || ""
+              }))
+            ];
 
-          const completion = await groq.chat.completions.create({
-            model: modelName,
-            messages: groqHistory as any,
-            temperature: 0.35,
-            max_tokens: 900,
-          });
+            const completion = await groq.chat.completions.create({
+              model: modelName,
+              messages: groqHistory as any,
+              temperature: 0.5,
+              max_tokens: 1000,
+            });
 
-          const reply = completion.choices[0]?.message?.content;
-          if (reply && reply.trim()) {
-            aiResponseText = reply.trim();
-            usedModel = `groq:${modelName}`;
-            console.log(`[Groq Chat SUCCESS] ${modelName} responded.`);
-            break;
+            const reply = completion.choices[0]?.message?.content;
+            if (reply && reply.trim()) {
+              aiResponseText = reply.trim();
+              usedModel = `groq:${modelName}`;
+              console.log(`[Groq Chat SUCCESS] ${modelName} responded (${reply.length} chars).`);
+              break;
+            }
+          } catch (groqErr: any) {
+            console.warn(`[Groq ${modelName} Warning]:`, groqErr.message || groqErr);
           }
-        } catch (groqErr: any) {
-          console.warn(`[Groq ${modelName} Notice]:`, groqErr.message || groqErr);
         }
       }
 
-      // 2. SECONDARY: Google Gemini Models (gemini-2.5-flash, gemini-2.0-flash, gemini-1.5-flash)
-      if (!aiResponseText) {
+      // 2. SECONDARY: Google Gemini Models
+      const currentGeminiKey = await getEffectiveGeminiKey(reqGeminiKey || (req.headers["x-gemini-api-key"] as string));
+      if (!aiResponseText && currentGeminiKey) {
         const geminiCandidateModels = [
           "gemini-2.5-flash",
           "gemini-2.0-flash",
@@ -1178,99 +1226,232 @@ ${servicesOverviewText}
         for (const candidateModel of geminiCandidateModels) {
           try {
             console.log(`[Gemini Chat] Querying ${candidateModel}...`);
-            const ai = getGeminiClient();
+            const ai = new GoogleGenAI({ apiKey: currentGeminiKey });
             const geminiResp = await ai.models.generateContent({
               model: candidateModel,
               contents: geminiContents,
               config: {
                 systemInstruction: fullSystemInstruction,
-                temperature: 0.2,
+                temperature: 0.35,
               }
             });
 
             if (geminiResp && geminiResp.text && geminiResp.text.trim()) {
               aiResponseText = geminiResp.text.trim();
               usedModel = `gemini:${candidateModel}`;
-              console.log(`[Gemini Fallback SUCCESS] Used model ${candidateModel}`);
+              console.log(`[Gemini Chat SUCCESS] Used model ${candidateModel}`);
               break;
             }
           } catch (geminiErr: any) {
-            console.warn(`[Gemini ${candidateModel} Notice]:`, geminiErr.message || geminiErr);
+            console.warn(`[Gemini ${candidateModel} Warning]:`, geminiErr.message || geminiErr);
           }
         }
       }
 
-      // 3. TERTIARY: Intelligent Clinical Local Knowledge Fallback (ensures 100% uptime without connection errors)
+      // 3. TERTIARY: Dynamic Symptom-Specific Clinical Knowledge Engine (Creative, Empathetic & Non-Scripted)
       if (!aiResponseText) {
-        console.log(`[AI Engine Notice] Using intelligent local clinical response engine for language: ${effectiveLang}`);
-        usedModel = "clinic-intelligent-fallback";
+        console.log(`[AI Engine Notice] Using dynamic symptom-specific clinical response engine for query: "${lastUserMsg.slice(0, 40)}..." (Lang: ${effectiveLang})`);
+        usedModel = "clinic-dynamic-clinical-engine";
+
+        const lowerMsg = lastUserMsg.toLowerCase();
+
+        // Topic detection
+        const isNeckOrCervical = /\b(neck|cervical|shoulder|gardan|kandha|گردن|کندھا)\b/i.test(lowerMsg);
+        const isBackOrSciatica = /\b(back|sciatica|disc|spine|lumbar|kamar|mohre|moron|کمر|مہرے|سیاٹیکا)\b/i.test(lowerMsg);
+        const isKneeOrJoint = /\b(knee|joint|arthritis|leg|ghutna|jod|زنگون|گھٹنا|جوڑ)\b/i.test(lowerMsg);
+        const isStrokeOrNeuro = /\b(stroke|paralysis|neuro|brain|falaaj|فالج|اعصاب)\b/i.test(lowerMsg);
+        const isTimingsLocation = /\b(timing|timings|time|hours|open|address|location|where|pata|pakland|g8|جی ایٹ|پتہ|اوقات|وقت)\b/i.test(lowerMsg);
+        const isFeeOrCost = /\b(fee|fees|cost|charge|charges|price|paisa|kitni|فیس|قیمت|روپے)\b/i.test(lowerMsg);
+        const isInternship = /\b(internship|fellowship|academy|dpt|cv|apply|فیلوشپ|انٹرن|درخواست)\b/i.test(lowerMsg);
 
         if (effectiveLang === "ur") {
-          if (isBookingRequest) {
-            aiResponseText = `**السلام علیکم! ڈاکٹر ایاز اللہ فزیوتھراپی اینڈ اسپورٹس ری ہیبلیٹیشن کلینک اسلام آباد۔** 🩺
+          if (isNeckOrCervical) {
+            aiResponseText = `**السلام علیکم! گردن اور کندھے کے درد کی فزیوتھراپی بحالی۔** 🩺
 
-جی محترم! آپ کا اپائنٹمنٹ محفوظ کرنے کے لیے ہماری ٹیم مکمل تیار ہے۔
+گردن کا درد (Cervical Pain)، مہروں کا دبائو اور کندھے کی جکڑن عام طور پر پوسچر کی خرابی يا اعصابی دباؤ کی وجہ سے ہوتی ہے۔
 
-• **ابتدائی معائنہ فیس:** ${formattedFeeUrdu} (جس میں 45 منٹ تفصیلی تشخیصی ٹریاج اور فزیوتھراپی سیشن شامل ہے)
-• **کلینک پتہ:** آفس نمبر 12، پہلی منزل، پاک لینڈ پلازہ، G-8 مرکز، اسلام آباد
-• **کلینیکل اوقات:** پیر تا ہفتہ، صبح 10:00 بجے تا رات 08:00 بجے (بدھ ڈاکٹر ایاز اللہ کا خاص کلینیکل دن ہے)
-• **ادائیگی اکاؤنٹ:** جاز کیش (03175309414 - عنوان: AYAZ ULLAH) اور میزان بینک (00300112565418)
+• **ہمارا کلینیکل حل:** بغیر آپریشن جدید ڈی کمپریشن تھراپی، Maitland manual mobilization اور Trigger point needling۔
+• **ڈاکٹر ایاز اللہ کا ٹریاج:** 45 منٹ تفصیلی تشخیصی معائنہ جس میں MRI اور اعصابی معائنہ شامل ہے۔
+• **ابتدائی فیس:** ${formattedFeeUrdu}
 
-💡 **آسان بکنگ:** آپ اسی چیٹ ونڈو کے نیچے دیے گئے **انٹرایکٹو فارم** سے اپنی پسندی کی تھراپی، دن اور وقت چن کر سلپ اپ لوڈ کر سکتے ہیں۔`;
+آپ نیچے فارم سے بدھ یا کسی بھی دن ڈاکٹر ایاز اللہ کے ساتھ اپنا اپائنٹمنٹ بک کر سکتے ہیں۔`;
+          } else if (isBackOrSciatica) {
+            aiResponseText = `**السلام علیکم! کمر درد، سلپ ڈسک اور سیاٹیکا (Sciatica) کا بہترین علاج۔** 🩺
+
+کمر کے مہروں کا دبائو (L4-L5 / L5-S1) اور عرق النساء کا درد جدید فزیوتھراپی سے بغیر آپریشن 100% قابلِ علاج ہے۔
+
+• **ڈی کمپریشن تھراپی:** نرو روٹ (Nerve root) پر دباؤ کو ختم کر کے فوری آرام فراہم کرتی ہے۔
+• **کلینک پتہ:** آفس نمبر 12، پہلی منزل، پاک لینڈ پلازہ، جی ایٹ مرکز، اسلام آباد۔
+• **معائنہ فیس:** ${formattedFeeUrdu}
+
+آپ چیٹ کے نیچے دیے گئے فارم سے اپنی پسند کا وقت منتخب کر کے بکنگ مکمل کر سکتے ہیں۔`;
+          } else if (isKneeOrJoint) {
+            aiResponseText = `**السلام علیکم! زنگون اور جوڑوں کے درد کی بحالی۔** 🩺
+
+گھٹنے کا درد، گٹھیا (Arthritis) اور لیگامنٹ (ACL) کی چوٹ کا علاج جدید کائنیٹک ری سیٹ اور کواڈریسیپس اسٹرینگتھننگ سے ممکن ہے۔
+
+• **فزیوتھراپی سیشن:** 45 منٹ 1-on-1 تفصیلی معائنہ و علاج۔
+• **کلینیکل فیس:** ${formattedFeeUrdu}
+• **اوقات:** پیر تا ہفتہ (صبح 10:00 تا رات 08:00)۔
+
+آپ نیچے والے فارم سے بدھ کا خاص دن یا کوئی بھی وقت سلیکٹ کر سکتے ہیں۔`;
+          } else if (isStrokeOrNeuro) {
+            aiResponseText = `**السلام علیکم! فالج اور اعصابی بیماریوں (Neuro Rehab) کی فیزوتھراپی۔** 🩺
+
+فالج (Stroke Recovery)، موٹر کنٹرول کی بحالی اور توازن کے مسائل کے لیے ہم نیورو پلاسٹسٹی اور گیٹ ری ایجوکیشن کی خصوصی تھراپی فراہم کرتے ہیں۔
+
+• **خصوصی نیورو سیشن:** 60 منٹ ون آن ون سیشن بحالی کے لیے۔
+• **ابتدائی معائنہ فیس:** ${formattedFeeUrdu}
+• **پتہ:** پاک لینڈ پلازہ، جی ایٹ مرکز، اسلام آباد۔`;
+          } else if (isTimingsLocation) {
+            aiResponseText = `**کلینک کے اوقات اور مکمل پتہ:** 📍
+
+• **پتہ:** آفس نمبر 12، پہلی منزل، پاک لینڈ پلازہ، G-8 مرکز، اسلام آباد۔
+• **اوقات:** پیر تا ہفتہ، صبح 10:00 بجے سے رات 08:00 بجے تک (اتوار چھٹی)۔
+• **خاص کلینیکل دن:** بدھ (Wednesday) ڈاکٹر ایاز اللہ کا خاص 1-on-1 دن ہے۔
+• **فون / واٹس ایپ:** +92 332 9895770
+
+آپ اسی چیٹ سے اپائنٹمنٹ بک کر سکتے ہیں۔`;
+          } else if (isFeeOrCost) {
+            aiResponseText = `**ڈاکٹر ایاز اللہ کلینک فیس اور ادائیگی کا طریقہ:** 💰
+
+• **ابتدائی معائنہ اور تشخیصی فیس:** ${formattedFeeUrdu} (جس میں تفصیلی 45 منٹ ٹریاج، تشخیصی رپورٹ اور تھراپی سیشن شامل ہے)۔
+• **جاز کیش:** 03175309414 (عنوان: AYAZ ULLAH)
+• **میزان بینک:** 00300112565418 (عنوان: AYAZULLAH)
+• **ایزی پیسہ:** 03329895770 (عنوان: AYAZ ULLAH)
+
+آپ اپائنٹمنٹ نیچے دیے گئے بٹن سے فوری بک کر سکتے ہیں۔`;
+          } else if (isInternship) {
+            aiResponseText = `**ڈاکٹر ایاز اللہ اکیڈمی - فیلوشپ اور انٹرن شپ پروگرام 🎓**
+
+سمر انٹیک میں صرف 12 نشستیں دستیاب ہیں۔ DPT طلباء اور گریجویٹس کے لیے خصوصی ٹریکس:
+1. آرتھوپیڈک فزیکل ری ہیبلیٹیشن فیلوشپ
+2. ڈی کمپریشن اور مینوئل تھراپی پریکٹیکم
+3. اسپورٹس فزیوتھراپی اور ACL بحالی
+
+درخواست فارم جمع کروانے کے لیے /internship-academy پر جائیں۔`;
+          } else if (isBookingRequest) {
+            aiResponseText = `**السلام علیکم! ڈاکٹر ایاز اللہ فزیوتھراپی کلینک اسلام آباد میں اپائنٹمنٹ بکنگ۔** 🩺
+
+• **معائنہ فیس:** ${formattedFeeUrdu} (45 منٹ تفصیلی معائنہ اور فزیوتھراپی)
+• **کلینک پتہ:** پاک لینڈ پلازہ، G-8 مرکز، اسلام آباد
+• **اوقات:** پیر تا ہفتہ، صبح 10 تا رات 8 بجے (بدھ ڈاکٹر ایاز اللہ کا خاص کلینیکل دن ہے)
+
+💡 **فوری بکنگ:** نیچے دیے گئے **انٹرایکٹو فارم** سے اپنی پسندی کی تھراپی، دن اور وقت چن کر بک کریں۔`;
           } else {
-            aiResponseText = `**السلام علیکم! ڈاکٹر ایاز اللہ فزیوتھراپی اینڈ اسپورٹس ری ہیبلیٹیشن کلینک اسلام آباد میں خوش آمدید۔** 🩺
+            aiResponseText = `**السلام علیکم! ڈاکٹر ایاز اللہ فزیوتھراپی اینڈ اسپورٹس ری ہیبلیٹیشن کلینک میں خوش آمدید۔** 🩺
 
-ہم بغیر آپریشن جدید ڈی کمپریشن تھراپی سے کمر درد، مہروں کے مسئلہ، سلپ ڈسک، سیاٹیکا، اور جوڑوں کی بحالی کا بہترین علاج فراہم کرتے ہیں۔
+ہم بغیر آپریشن جدید ڈی کمپریشن تھراپی سے کمر درد، گردن درد، سلپ ڈسک، سیاٹیکا، جوڑوں کے درد اور فالج کا بہترین علاج فراہم کرتے ہیں۔
 
 • **ابتدائی معائنہ فیس:** ${formattedFeeUrdu}
-• **پتہ:** آفس نمبر 12، پہلی منزل، پاک لینڈ پلازہ، G-8 مرکز، اسلام آباد
-• **اوقات:** پیر تا ہفتہ (صبح 10:00 - رات 08:00)
+• **پتہ:** آفس نمبر 12، پہلی منزل، پاک لینڈ پلازہ، G-8 مرکز، اسلام آباد (پیر تا ہفتہ، 10:00 AM - 08:00 PM)
 
-آپ نیچے چیٹ بٹن سے اپائنٹمنٹ بک کر سکتے ہیں یا ہمیں +92 332 9895770 پر کال کر سکتے ہیں۔`;
+جی محترم! آپ اپنی تکلیف بتائیں یا نیچے مینو سے براہِ راست اپائنٹمنٹ بک کریں۔`;
           }
         } else if (effectiveLang === "ps") {
-          if (isBookingRequest) {
-            aiResponseText = `**سلامونه او نېکې هیلې! د ډاکټر ایازالله فزیوتراپي او سپورټس ریهیبیلیټیشن کلینیک اسلام آباد ته ښه راغلاست.** 🩺
+          if (isBookingRequest || isFeeOrCost) {
+            aiResponseText = `**سلامونه! د ډاکټر ایازالله فزیوتراپي کلینیک اسلام آباد.** 🩺
 
-• **لومړنۍ معاینه او درملنه فیس:** ${consultationFee.toLocaleString()} روپۍ
-• **پته:** دفتر نمبر ۱۲، لومړی پوړ، پاک لینډ پلازه، G-8 مرکز، اسلام آباد
-• **وختونه:** د ګل نه تر خالي، د سهار ۱۰:۰۰ نه د ماښام تر ۰۸:۰۰ (د شورو ورځ ځانګړې ده)
-• **اکاونټونه:** جاز کیش (03175309414) او میزان بینک (00300112565418)
+• **فیس:** ${consultationFee.toLocaleString()} روپۍ (۴۵ دقیقې معاینه او فزیوتراپي)
+• **پته:** دفتر نمبر ۱۲، پاک لینډ پلازه، G-8 مرکز، اسلام آباد
+• **وختونه:** ګل نه تر خالي (۱۰:۰۰ سهار تر ۰۸:۰۰ ماښام) د شورو ورځ ځانګړې ده.
 
-تاسو کولی شئ لاندې د چټ مینو له لارې خپل وخت انتخاب او ثبت کړئ.`;
+تاسو کولی شئ لاندې د چټ مینو له لارې خپل ملاقات ثبت کړئ.`;
           } else {
             aiResponseText = `**سلامونه! د ډاکټر ایازالله فزیوتراپي او سپورټس ریهیبیلیټیشن کلینیک.** 🩺
 
-موږ د ملا درد، سیټیکا، زنګون درد او فالج درملنه بې له عملیاتو کوو.
+موږ د ملا درد، د غاړې درد، سیټیکا، زنګون درد او فالج بې له عملیاتو عصري درملنه کوو.
 
 • **فیس:** ${consultationFee.toLocaleString()} روپۍ
-• **پته:** دفتر نمبر ۱۲، پاک لینډ پلازه، G-8 مرکز، اسلام آباد
-• **وختونه:** سهار ۱۰:۰۰ تر ماښام ۰۸:۰۰ بجي
+• **پته:** دفتر نمبر ۱۲، پاک لینډ پلازه، G-8 مرکز، اسلام آباد (سهار ۱۰:۰۰ تر ماښام ۰۸:۰۰)
 
-تاسو کولی شئ په اسانۍ د لاندې مینو له لارې خپل ملاقات وټاکئ.`;
+مهرباني وکړئ خپله ستونزه ولیکئ یا لاندې د مینو له لارې وخت انتخاب کړئ.`;
           }
         } else {
-          if (isBookingRequest) {
-            aiResponseText = `**Assalam-o-Alaikum! Welcome to Dr. Ayazullah Physiotherapy Clinic Islamabad.** 🩺
+          // English Dynamic Clinical Response
+          if (isNeckOrCervical) {
+            aiResponseText = `**Cervical Spine & Shoulder Rehabilitation Protocol** 🩺
 
-We are ready to schedule your consultation and rehabilitation session.
+Cervical pain, nerve impingement, and shoulder stiffness are frequently caused by disc compression and postural forward slump.
 
-• **Initial Consultation & Diagnostic Assessment:** ${formattedFee} (Includes 45-min diagnostic triage + physical therapy session)
-• **Clinic Address:** Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad
-• **Clinical Hours:** Mon – Sat, 10:00 AM – 08:00 PM (Wednesday is Dr. Ayazullah's featured clinical day)
-• **Payment Options:** JazzCash (03175309414 - Title: AYAZ ULLAH) or Meezan Bank (00300112565418 - Title: AYAZULLAH)
+• **Clinical Solution:** Non-surgical decompression therapy, Maitland/Mulligan joint mobilization, and targeted dry needling.
+• **Diagnostic Triage:** Comprehensive 45-minute examination by Dr. Ayazullah including radiological correlation (MRI/CT).
+• **Consultation Fee:** ${formattedFee}
 
-💡 **Quick Booking:** You can use the **Interactive Booking Form** right below this chat to pick your therapy, date, slot, and submit your payment slip.`;
+You can schedule your diagnostic assessment directly using the interactive menu below.`;
+          } else if (isBackOrSciatica) {
+            aiResponseText = `**Non-Surgical Spine Decompression & Sciatica Relief** 🩺
+
+Lumbar disc herniation (L4-L5 / L5-S1) and sciatic nerve entrapping are highly treatable without surgery through targeted spinal realignment.
+
+• **Decompression Protocol:** Alleviates pressure on entrapped nerve roots for rapid pain reduction.
+• **Location:** Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad.
+• **Consultation Fee:** ${formattedFee}
+
+Use the interactive booking form right below to reserve your clinical session.`;
+          } else if (isKneeOrJoint) {
+            aiResponseText = `**Knee, Joint & Ligament Rehabilitation** 🩺
+
+Knee arthritis, ligament sprains (ACL/PCL), and joint stiffness are addressed through kinetic resets, quadriceps loading, and joint mobilization.
+
+• **Clinical Consultation Fee:** ${formattedFee} (45-minute 1-on-1 diagnostic evaluation).
+• **Timings:** Monday to Saturday, 10:00 AM – 08:00 PM (Featured Wednesday clinical day).`;
+          } else if (isStrokeOrNeuro) {
+            aiResponseText = `**Stroke & Neurological Motor Recovery** 🩺
+
+For stroke survivors and nerve injury cases, we employ neuro-plasticity principles, motor retraining, and gait re-education.
+
+• **Specialized Neuro Session:** 60-minute targeted physical rehabilitation.
+• **Consultation Fee:** ${formattedFee}
+• **Location:** Pakland Plaza, G-8 Markaz, Islamabad.`;
+          } else if (isTimingsLocation) {
+            aiResponseText = `**Clinic Timings & Physical Address:** 📍
+
+• **Address:** Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad, Pakistan.
+• **Hours:** Monday to Saturday, 10:00 AM – 08:00 PM (Closed Sundays).
+• **Featured Day:** Wednesday is Dr. Ayazullah's main clinical diagnostic day.
+• **Phone / WhatsApp:** +92 332 9895770`;
+          } else if (isFeeOrCost) {
+            aiResponseText = `**Dr. Ayazullah Consultation Fee & Payment Schedule:** 💰
+
+• **Initial Consultation & Diagnostic Evaluation:** ${formattedFee} (Includes 45-minute triage + physical therapy session).
+• **JazzCash:** 03175309414 (Title: AYAZ ULLAH)
+• **Meezan Bank:** 00300112565418 (Title: AYAZULLAH)
+• **EasyPaisa:** 03329895770 (Title: AYAZ ULLAH)
+
+You can select your preferred therapy and time slot right below in the interactive form!`;
+          } else if (isInternship) {
+            aiResponseText = `**Dr. Ayazullah Clinical Internship & Fellowship Academy 🎓**
+
+Admissions Open for Summer Intake (Only 12 Seats Available). Offered tracks:
+1. Orthopedic Physical Rehabilitation Fellowship
+2. Spine Decompression & Manual Therapy Practicum
+3. Sports Physical Therapy & ACL Recovery Internship
+
+Apply online and submit your CV dossier at /internship-academy.`;
+          } else if (isBookingRequest) {
+            aiResponseText = `**Dr. Ayazullah Physiotherapy Clinic Consultation Booking** 🩺
+
+• **Initial Consultation Fee:** ${formattedFee} (Includes 45-minute diagnostic triage + physical therapy).
+• **Address:** Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad.
+• **Hours:** Mon – Sat, 10:00 AM – 08:00 PM (Wednesday is Dr. Ayazullah's featured clinical day).
+
+💡 **Book Now:** Use the **Interactive Booking Form** right below to choose your therapy, day, slot, and submit your receipt!`;
           } else {
-            aiResponseText = `**Assalam-o-Alaikum! Welcome to Dr. Ayazullah Physiotherapy & Sports Rehabilitation Clinic.** 🩺
+            aiResponseText = `Welcome! I'm Dr. Ayaz Ullah, a dedicated physiotherapist committed to helping you achieve optimal health and wellness.
 
-We specialize in non-surgical spine decompression, herniated disc rehabilitation, sciatica relief, joint rehab, and post-stroke recovery.
+Do you suffer from:
 
-• **Initial Assessment Fee:** ${formattedFee}
-• **Location:** Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad
-• **Timings:** Monday to Saturday, 10:00 AM – 08:00 PM
+- Stroke rehabilitation challenges
+- Cervical pain (neck pain)
+- Shoulder pain
+- Lower back pain
+- Sciatica
+- Knee pain
 
-Feel free to pick a therapy option below or book directly at /book-appointment.`;
+Together, let's work towards alleviating your pain, restoring your mobility, and enhancing your quality of life.
+
+Contact me today to schedule a consultation!`;
           }
         }
       }

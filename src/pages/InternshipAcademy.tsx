@@ -786,7 +786,7 @@ export default function InternshipAcademy() {
                           type="tel"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
-                          placeholder="+92 300 1234567"
+                          placeholder="+92 332 9895770"
                           className="w-full h-11 px-space-sm rounded-lg bg-surface border border-outline-variant/50 focus:outline-none focus:ring-2 focus:ring-primary text-body-sm text-on-surface"
                         />
                       </div>

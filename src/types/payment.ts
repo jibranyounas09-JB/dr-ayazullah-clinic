@@ -17,7 +17,7 @@ export const DEFAULT_PAYMENT_METHODS: PaymentMethodConfig[] = [
     name: "Easypaisa",
     type: "wallet",
     accountTitle: "Dr Ayazullah",
-    accountNumber: "0300 1234567",
+    accountNumber: "0332 9895770",
     instructions: "Transfer to Easypaisa mobile account and attach payment receipt screenshot.",
     isActive: true
   },

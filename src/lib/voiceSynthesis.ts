@@ -224,7 +224,7 @@ export async function speakVocalResponse(
     let targetVoice: SpeechSynthesisVoice | null = null;
     let textToSpeak = cleaned;
 
-    if (detectedLang === "ur" || (detectedLang === "auto" && isArabicUrduPashtoScript(cleaned))) {
+    if ((detectedLang as string) === "ur" || (detectedLang as string) === "auto" || isArabicUrduPashtoScript(cleaned)) {
       // Check for native Urdu voice on user's system
       targetVoice =
         voices.find(v => v.lang.toLowerCase().includes("ur-pk")) ||

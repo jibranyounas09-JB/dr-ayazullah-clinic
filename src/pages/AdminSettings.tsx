@@ -13,7 +13,7 @@ export default function AdminSettings() {
     clinicAddress: "Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad",
     consultationFee: "PKR 3,000",
     easypaisaTitle: "Dr Ayazullah",
-    easypaisaNumber: "0300 1234567",
+    easypaisaNumber: "0332 9895770",
     bankName: "Meezan Bank",
     bankTitle: "Ayazullah Physiotherapy",
     bankIban: "PK12 MEZN 0000 1234 5678 90",
@@ -24,7 +24,9 @@ export default function AdminSettings() {
     manualExperience: "3.5+",
     recoveriesCount: "14k+",
     clinicRating: "4.9",
-    paymentMethods: DEFAULT_PAYMENT_METHODS as PaymentMethodConfig[]
+    paymentMethods: DEFAULT_PAYMENT_METHODS as PaymentMethodConfig[],
+    groqApiKey: "",
+    geminiApiKey: ""
   });
 
   const [isSaving, setIsSaving] = useState(false);
@@ -97,7 +99,9 @@ export default function AdminSettings() {
             manualExperience: data.manualExperience || "3.5+",
             recoveriesCount: data.recoveriesCount || "14k+",
             clinicRating: data.clinicRating || "4.9",
-            paymentMethods: methods
+            paymentMethods: methods,
+            groqApiKey: data.groqApiKey || "",
+            geminiApiKey: data.geminiApiKey || ""
           }));
         }
       } catch (error) {
@@ -531,7 +535,7 @@ export default function AdminSettings() {
                     type="text"
                     value={methodForm.accountNumber || ""}
                     onChange={(e) => setMethodForm({ ...methodForm, accountNumber: e.target.value })}
-                    placeholder="e.g. 0300 1234567 or 00300112565418"
+                    placeholder="e.g. 0332 9895770 or 00300112565418"
                     className="w-full h-10 px-3 rounded-lg bg-surface border border-surface-container focus:outline-none focus:border-primary text-sm font-mono"
                   />
                 </div>
@@ -742,6 +746,59 @@ export default function AdminSettings() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </div>
+
+      {/* AI Voice Assistant & LLM Engine Configuration Card */}
+      <div className="bg-surface rounded-2xl p-6 shadow-sm border border-surface-container flex flex-col gap-6">
+        <div className="flex items-center gap-3 border-b border-surface-container pb-4">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <span className="material-symbols-outlined text-[24px]">smart_toy</span>
+          </div>
+          <div>
+            <h2 className="font-headline-sm font-bold text-on-surface">AI Voice Assistant & LLM Configuration</h2>
+            <p className="font-body-sm text-xs text-on-surface-variant">
+              Configure Groq (Llama 3.3 70B & Whisper STT) and Google Gemini API Keys for dynamic voice responses.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col gap-2">
+            <label className="font-label-sm font-bold text-on-surface flex items-center justify-between">
+              <span>Groq API Key (Llama 3.3 & Whisper STT):</span>
+              <span className="text-[11px] font-normal text-primary">Recommended</span>
+            </label>
+            <input
+              type="password"
+              name="groqApiKey"
+              placeholder="gsk_..."
+              value={settings.groqApiKey || ""}
+              onChange={handleChange}
+              className="h-11 px-4 rounded-xl bg-surface-container-low text-on-surface font-mono text-xs focus:outline-none focus:ring-2 focus:ring-primary border border-surface-container transition-all"
+            />
+            <p className="text-[11px] text-on-surface-variant">
+              Powers instant Whisper voice transcription and high-accuracy Llama 3.3 70B clinical reasoning.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="font-label-sm font-bold text-on-surface flex items-center justify-between">
+              <span>Google Gemini API Key:</span>
+              <span className="text-[11px] font-normal text-on-surface-variant">Secondary Fallback</span>
+            </label>
+            <input
+              type="password"
+              name="geminiApiKey"
+              placeholder="AIzaSy..."
+              value={settings.geminiApiKey || ""}
+              onChange={handleChange}
+              className="h-11 px-4 rounded-xl bg-surface-container-low text-on-surface font-mono text-xs focus:outline-none focus:ring-2 focus:ring-primary border border-surface-container transition-all"
+            />
+            <p className="text-[11px] text-on-surface-variant">
+              Used as a secondary model fallback if Groq rate limit occurs.
+            </p>
           </div>
         </div>
       </div>

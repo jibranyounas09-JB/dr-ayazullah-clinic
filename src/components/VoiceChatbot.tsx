@@ -42,6 +42,7 @@ interface Message {
   timestamp: string;
   actionUrl?: string;
   actionLabel?: string;
+  actionButtons?: { url: string; label: string }[];
   imageUrl?: string;
   imageName?: string;
   // If this message contains an interactive booking draft
@@ -244,17 +245,25 @@ export function VoiceChatbot() {
       id: "welcome-1",
       role: "assistant",
       content: 
-`**Assalam-o-Alaikum! Welcome to Dr. Ayazullah Physiotherapy Clinic.** 🩺
-I am your AI Clinical Assistant. You can speak or write to me in **English** or **Urdu (اردو)**.
+`Welcome! I'm Dr. Ayaz Ullah, a dedicated physiotherapist committed to helping you achieve optimal health and wellness.
 
-I can help you:
-• **Book therapy on Wednesday** (or any day) with instant payment schedule & slip upload
-• **Check your appointment status** & download your verified PDF slip
-• **Learn about services, clinic location & timings**
-• **Apply for clinical fellowships & internships**`,
+Do you suffer from:
+
+- Stroke rehabilitation challenges
+- Cervical pain (neck pain)
+- Shoulder pain
+- Lower back pain
+- Sciatica
+- Knee pain
+
+Together, let's work towards alleviating your pain, restoring your mobility, and enhancing your quality of life.
+
+Contact me today to schedule a consultation!`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      actionUrl: "/manage-booking",
-      actionLabel: "🔍 Check My Appointment"
+      actionButtons: [
+        { url: "/book-appointment", label: "📅 Book Appointment" },
+        { url: "/manage-booking", label: "🔍 Check My Appointment" }
+      ]
     }
   ]);
 
@@ -372,13 +381,20 @@ I can help you:
 • **کلینک کے اوقات، پتہ اور فیس کے بارے میں جانیں**`;
     } else {
       greeting =
-`**Assalam-o-Alaikum! Welcome to Dr. Ayazullah Physiotherapy Clinic.** 🩺
-I am your AI Clinical Assistant. You can speak or write to me in **English** or **Urdu (اردو)**.
+`Welcome! I'm Dr. Ayaz Ullah, a dedicated physiotherapist committed to helping you achieve optimal health and wellness.
 
-I can help you:
-• **Book therapy on Wednesday** (or any day) with instant payment schedule & slip upload
-• **Check your appointment status** & download your verified PDF slip
-• **Learn about services, initial consultation fee (${feeStr}), clinic location & timings**`;
+Do you suffer from:
+
+- Stroke rehabilitation challenges
+- Cervical pain (neck pain)
+- Shoulder pain
+- Lower back pain
+- Sciatica
+- Knee pain
+
+Together, let's work towards alleviating your pain, restoring your mobility, and enhancing your quality of life.
+
+Contact me today to schedule a consultation!`;
     }
 
     setMessages(prev => [
@@ -388,8 +404,10 @@ I can help you:
         role: "assistant",
         content: greeting,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        actionUrl: "/manage-booking",
-        actionLabel: lang === "ur" ? "🔍 اپائنٹمنٹ چیک کریں" : "🔍 Check My Appointment"
+        actionButtons: [
+          { url: "/book-appointment", label: lang === "ur" ? "📅 اپائنٹمنٹ بک کریں" : lang === "ps" ? "📅 د ملاقات ثبت" : "📅 Book Appointment" },
+          { url: "/manage-booking", label: lang === "ur" ? "🔍 اپائنٹمنٹ چیک کریں" : lang === "ps" ? "🔍 خپل ملاقات وګورئ" : "🔍 Check My Appointment" }
+        ]
       }
     ]);
 
@@ -466,10 +484,16 @@ I can help you:
             reader.onloadend = async () => {
               const base64Audio = (reader.result as string).split(";base64,")[1];
               try {
+                const storedGroqKey = typeof window !== "undefined" ? localStorage.getItem("groq_api_key") : "";
                 const res = await fetch("/api/ai/transcribe", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ audioData: base64Audio, mimeType, language: activeLang })
+                  body: JSON.stringify({ 
+                    audioData: base64Audio, 
+                    mimeType, 
+                    language: activeLang,
+                    groqApiKey: storedGroqKey || undefined
+                  })
                 });
                 const data = await res.json();
                 const finalText = (data.success && data.text) ? data.text.trim() : liveTranscriptPreview.trim();
@@ -666,6 +690,9 @@ I can help you:
       : text;
 
     try {
+      const storedGroqKey = typeof window !== "undefined" ? localStorage.getItem("groq_api_key") : "";
+      const storedGeminiKey = typeof window !== "undefined" ? localStorage.getItem("gemini_api_key") : "";
+
       const res = await fetch("/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -676,7 +703,9 @@ I can help you:
           ],
           userLanguage: userLanguage,
           consultationFee: consultationFee,
-          servicesList: dynamicTherapyOptions
+          servicesList: dynamicTherapyOptions,
+          groqApiKey: storedGroqKey || undefined,
+          geminiApiKey: storedGeminiKey || undefined
         })
       });
 
@@ -1172,17 +1201,31 @@ I can help you:
                     </div>
                   )}
 
-                  {/* Attached Action Link Button */}
-                  {m.actionUrl && (
-                    <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center gap-2">
-                      <Link
-                        to={m.actionUrl}
-                        onClick={() => setIsOpen(false)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs transition-colors"
-                      >
-                        <span>{m.actionLabel || "Open Page"}</span>
-                        <ExternalLink className="w-3.5 h-3.5" />
-                      </Link>
+                  {/* Attached Action Link Buttons */}
+                  {(m.actionButtons || m.actionUrl) && (
+                    <div className="mt-2.5 pt-2 border-t border-slate-100 flex flex-wrap items-center gap-2">
+                      {m.actionButtons ? (
+                        m.actionButtons.map((btn, idx) => (
+                          <Link
+                            key={idx}
+                            to={btn.url}
+                            onClick={() => setIsOpen(false)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs transition-colors border border-emerald-200/60 shadow-xs"
+                          >
+                            <span>{btn.label}</span>
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </Link>
+                        ))
+                      ) : (
+                        <Link
+                          to={m.actionUrl!}
+                          onClick={() => setIsOpen(false)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs transition-colors border border-emerald-200/60 shadow-xs"
+                        >
+                          <span>{m.actionLabel || "Open Page"}</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </Link>
+                      )}
                     </div>
                   )}
 
@@ -1375,7 +1418,7 @@ I can help you:
                             type="text"
                             value={activeBooking.patientPhone}
                             onChange={(e) => setActiveBooking(prev => prev ? { ...prev, patientPhone: e.target.value } : null)}
-                            placeholder="0300 1234567"
+                            placeholder="0332 9895770"
                             className="w-full h-8.5 pl-8 pr-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-emerald-600 font-mono font-medium"
                           />
                         </div>

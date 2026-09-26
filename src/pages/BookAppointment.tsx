@@ -689,8 +689,7 @@ export default function BookAppointment() {
                   <img className="w-14 h-14 rounded-full object-cover shrink-0" alt="Doctor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjNrkckK_zXuUXx8S-AFBI9OFqx533QeOk8MKiPbo-WM-fME6rlCOeU4AaWFk4RtAufObV1eScvG7_dsRcp5242lqSM_0F9bl7IaZEtYjHZ75WRtlnPE6p4IWRESefH7TFA4f7PP0T_Bql-GR1zcqyWnpk0FcCUROy2eMXPYmzssXyjb-7z3r72gYWY_9caomXqFxExvpoqKzlRukPWa7ldbXw7SwMG7KvbUo4FhyUDfhukbBwh5Wc"/>
                   <div className="flex flex-col">
                     <span className="font-label-lg text-label-lg font-bold text-on-surface">Dr. Ayazullah</span>
-                    <span className="font-label-sm text-label-sm text-primary font-medium">Senior Physical Therapist</span>
-                    <span className="font-body-sm text-[11px] text-on-surface-variant">MS-OMPT • IFOMPT Fellow</span>
+                    <span className="font-label-sm text-xs text-primary font-bold">DPT (IU) — Iqra University</span>
                   </div>
                 </div>
 
@@ -893,7 +892,7 @@ export default function BookAppointment() {
                     <span className="font-body-sm text-[12px] text-on-surface-variant">Duty Nurse Desk</span>
                   </div>
                 </div>
-                <a className="px-space-xs py-1 rounded-full bg-surface-container-lowest hover:bg-surface-container text-primary font-label-sm text-label-sm font-bold shadow-sm transition-colors" href="tel:+923001234567">
+                <a className="px-space-xs py-1 rounded-full bg-surface-container-lowest hover:bg-surface-container text-primary font-label-sm text-label-sm font-bold shadow-sm transition-colors" href="tel:+923329895770">
                   Call Desk
                 </a>
               </div>

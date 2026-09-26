@@ -4,6 +4,51 @@ import { db, handleFirestoreError, OperationType } from "../lib/firebase";
 import { collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { generateAppointmentPDF } from "../lib/pdfGenerator";
 
+/**
+ * Checks whether the current system time has reached or passed the scheduled appointment date and time.
+ */
+export function isAppointmentTimeReached(dateStr?: string, timeStr?: string): boolean {
+  if (!dateStr) return true;
+  try {
+    const now = new Date();
+    let year = now.getFullYear();
+    let month = now.getMonth();
+    let day = now.getDate();
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+      const [y, m, d] = dateStr.split("-").map(Number);
+      year = y;
+      month = m - 1;
+      day = d;
+    } else {
+      const parsedDate = new Date(dateStr);
+      if (!isNaN(parsedDate.getTime())) {
+        year = parsedDate.getFullYear();
+        month = parsedDate.getMonth();
+        day = parsedDate.getDate();
+      }
+    }
+
+    let hours = 10;
+    let minutes = 0;
+    if (timeStr) {
+      const match = timeStr.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+      if (match) {
+        hours = parseInt(match[1], 10);
+        minutes = parseInt(match[2], 10);
+        const ampm = match[3]?.toUpperCase();
+        if (ampm === "PM" && hours < 12) hours += 12;
+        if (ampm === "AM" && hours === 12) hours = 0;
+      }
+    }
+
+    const scheduledDate = new Date(year, month, day, hours, minutes, 0);
+    return now.getTime() >= scheduledDate.getTime();
+  } catch (e) {
+    return true;
+  }
+}
+
 export default function AdminAppointments() {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [search, setSearch] = useState("");
@@ -414,15 +459,25 @@ export default function AdminAppointments() {
                           </button>
                         )}
                         {apt.status === 'Verified' && (
-                          <button 
-                            disabled={updatingId === apt.id}
-                            onClick={() => handleComplete(apt)}
-                            className="text-primary hover:bg-primary/10 px-3 py-1.5 rounded-md font-label-sm font-semibold transition-colors border border-primary/20 cursor-pointer flex items-center gap-1">
-                            {updatingId === apt.id ? (
-                              <span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>
-                            ) : null}
-                            <span>Mark Completed</span>
-                          </button>
+                          isAppointmentTimeReached(apt.date, apt.time) ? (
+                            <button 
+                              disabled={updatingId === apt.id}
+                              onClick={() => handleComplete(apt)}
+                              className="text-primary hover:bg-primary/10 px-3 py-1.5 rounded-md font-label-sm font-semibold transition-colors border border-primary/20 cursor-pointer flex items-center gap-1">
+                              {updatingId === apt.id ? (
+                                <span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>
+                              ) : null}
+                              <span>Mark Completed</span>
+                            </button>
+                          ) : (
+                            <span 
+                              title="Mark Completed unlocks at scheduled appointment date & time"
+                              className="text-on-surface-variant/70 text-[11px] font-medium bg-surface-container-low px-2.5 py-1 rounded-md border border-surface-container flex items-center gap-1 cursor-not-allowed select-none opacity-80"
+                            >
+                              <span className="material-symbols-outlined text-[13px] text-tertiary">lock_clock</span>
+                              <span>Time Pending</span>
+                            </span>
+                          )
                         )}
                         {apt.status === 'Refund Requested' && (
                           <button 
@@ -436,13 +491,13 @@ export default function AdminAppointments() {
                           </button>
                         )}
                         {apt.status === 'Completed' && (
-                          <span className="text-on-surface-variant text-[12px] italic">Done</span>
+                          <span className="text-on-surface-variant text-[12px] italic font-medium">Done</span>
                         )}
                         {apt.status === 'Cancelled' && (
                           <span className="text-error/70 text-[12px] italic">Refunded</span>
                         )}
 
-                        {apt.status !== 'Cancelled' && (
+                        {apt.status !== 'Cancelled' && apt.status !== 'Completed' && (
                           <button
                             type="button"
                             onClick={() => {

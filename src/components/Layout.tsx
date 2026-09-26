@@ -242,22 +242,21 @@ export default function Layout() {
               <div className="flex items-center gap-space-sm">
                 <span className="font-headline-md text-headline-md text-on-surface">Dr. Ayazullah Clinic</span>
               </div>
-              <p className="font-body-md text-body-md text-on-surface-variant max-w-md">Senior Consultant Physical Therapist (DPT, MS-OMPT, Certified Dry Needling Practitioner). Pioneering patient-centric physical rehabilitation, non-surgical spine restoration, and sports motion recovery.</p>
+              <p className="font-body-md text-body-md text-on-surface-variant max-w-md">Consultant Physical Therapist (DPT IU — Iqra University). Certified Chiropractor, Dry Needling Practitioner, Certified K-Taping, Certified BLS, FIFA Diploma in Football Medicine, World Rugby Level 1 Course.</p>
               <div className="flex flex-col gap-space-xxs pt-space-xs">
                 <span className="font-label-md text-label-md text-primary font-bold flex items-center gap-space-xs">
                   <span className="material-symbols-outlined text-[18px]">verified</span>Certified &amp; Accredited Clinical Practice
                 </span>
-                <p className="font-body-sm text-body-sm text-on-surface-variant">Member International Federation of Orthopaedic Physical Therapists (IFOMPT) &amp; Pakistan Physical Therapy Association (PPTA).</p>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">Non-surgical musculoskeletal spine restoration, specialized chiropractic alignment, and sports injury rehabilitation.</p>
               </div>
             </div>
             <div className="flex flex-col gap-space-sm">
               <span className="font-label-lg text-label-lg text-on-surface uppercase tracking-wider font-bold">Care Programs</span>
               <nav className="flex flex-col gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
                 <Link className="hover:text-primary transition-colors" to="/">Spine &amp; Disc Restoration</Link>
+                <Link className="hover:text-primary transition-colors" to="/">Sports injury rehabilitation</Link>
+                <Link className="hover:text-primary transition-colors" to="/">Dry Needling &amp; Myofascial pain treatment</Link>
                 <Link className="hover:text-primary transition-colors" to="/">Orthopedic Rehabilitation</Link>
-                <Link className="hover:text-primary transition-colors" to="/">Post-Surgical Motion Care</Link>
-                <Link className="hover:text-primary transition-colors" to="/">Dry Needling &amp; Myofascial</Link>
-                <Link className="hover:text-primary transition-colors" to="/">Sports Athletic Return</Link>
               </nav>
             </div>
             <div className="flex flex-col gap-space-sm">
@@ -281,7 +280,7 @@ export default function Layout() {
                 </div>
                 <div className="flex items-center gap-space-xs">
                   <span className="material-symbols-outlined text-primary text-[18px] shrink-0">support_agent</span>
-                  <a className="hover:text-primary font-bold text-on-surface" href="tel:+923009876543">Acute Injury: +92 (300) 987-6543</a>
+                  <a className="hover:text-primary font-bold text-on-surface" href="tel:+923329895770">Acute Injury: +92 332 9895770</a>
                 </div>
                 <div className="flex items-center gap-space-xs">
                   <WhatsAppIcon className="text-primary w-[18px] h-[18px] shrink-0" />

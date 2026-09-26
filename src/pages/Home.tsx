@@ -200,13 +200,13 @@ export default function Home() {
                 color: "primary"
               },
               {
-                title: "Sports Injury & Athletics",
+                title: "Sports injury rehabilitation",
                 desc: "ACL/PCL tear protocols, rotator cuff impingement resolution, and biomechanical return-to-play screening.",
                 icon: "sprint",
                 color: "secondary"
               },
               {
-                title: "Dry Needling & Myofascial",
+                title: "Dry Needling & Myofascial pain treatment",
                 desc: "Targeted intramuscular trigger point deactivation for tension headache relief, spasms, and deep fascia relaxation.",
                 icon: "pin_invoke",
                 color: "tertiary"
@@ -229,95 +229,172 @@ export default function Home() {
         </div>
       </section>
 
-      {/* About Doctor Section */}
-      <section className="bg-surface py-space-3xl px-gutter-mobile md:px-gutter-desktop border-t border-b border-surface-container overflow-hidden relative">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-space-2xl items-center relative z-10">
-          <div className="relative">
-            <div className="absolute top-4 -left-4 w-full h-full bg-primary-fixed/20 rounded-3xl -z-10"></div>
-            
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              onChange={handlePhotoSelect} 
-              accept="image/*" 
-              className="hidden" 
-            />
+      {/* Prominent Doctor Introduction Section */}
+      <section className="relative py-space-3xl px-gutter-mobile md:px-gutter-desktop bg-gradient-to-b from-surface to-surface-container-low border-t border-b border-surface-container overflow-hidden">
+        {/* Subtle decorative glow */}
+        <div className="absolute top-1/2 left-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none -translate-y-1/2"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-            {doctorPhoto ? (
-              <div className="relative w-full max-w-md mx-auto rounded-3xl overflow-hidden shadow-lg aspect-[4/5] bg-surface-container">
-                <img 
-                  src={doctorPhoto} 
-                  alt="Dr. Ayazullah Portrait" 
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ) : (
-              <div 
-                onClick={() => fileInputRef.current?.click()}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={handleDrop}
-                className="w-full max-w-md mx-auto rounded-3xl border-2 border-dashed border-primary/40 hover:border-primary bg-primary/5 hover:bg-primary/10 transition-all aspect-[4/5] flex flex-col items-center justify-center p-6 text-center cursor-pointer group shadow-inner"
-              >
-                <div className="w-16 h-16 rounded-2xl bg-primary/15 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-sm">
-                  <span className="material-symbols-outlined text-[36px]">add_a_photo</span>
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-space-2xl">
+            <span className="inline-flex items-center gap-1.5 px-space-md py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm uppercase tracking-widest font-bold mb-space-xs">
+              <span className="material-symbols-outlined text-[16px]">stethoscope</span>
+              Consultant Profile &amp; Qualifications
+            </span>
+            <h2 className="font-display-md md:font-display-lg text-display-md text-on-surface tracking-tight font-bold">
+              Meet Dr. Ayazullah
+            </h2>
+            <p className="font-body-lg text-body-lg text-on-surface-variant mt-2">
+              Pioneering patient-centric physical rehabilitation, specialized chiropractic alignment, non-surgical spine decompression, and sports medicine.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-2xl items-center bg-surface p-6 sm:p-10 rounded-3xl border border-surface-container-high shadow-2xl relative">
+            
+            {/* Left Column: Doctor Photo & Clean Overlay Tag */}
+            <div className="lg:col-span-5 relative flex flex-col items-center">
+              <div className="absolute top-4 -left-4 w-full h-full bg-primary/10 rounded-3xl -z-10"></div>
+
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handlePhotoSelect} 
+                accept="image/*" 
+                className="hidden" 
+              />
+
+              {doctorPhoto ? (
+                <div className="relative w-full max-w-md mx-auto rounded-3xl overflow-hidden shadow-xl aspect-[4/5] bg-surface-container border border-surface-container-high">
+                  <img 
+                    src={doctorPhoto} 
+                    alt="Dr. Ayazullah" 
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-                <h3 className="font-headline-sm text-base font-bold text-on-surface mb-1">
-                  Add Dr. Ayazullah's Photo
+              ) : (
+                <div 
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={handleDrop}
+                  className="w-full max-w-md mx-auto rounded-3xl border-2 border-dashed border-primary/40 hover:border-primary bg-primary/5 hover:bg-primary/10 transition-all aspect-[4/5] flex flex-col items-center justify-center p-6 text-center cursor-pointer group shadow-inner"
+                >
+                  <div className="w-16 h-16 rounded-2xl bg-primary/15 text-primary flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-sm">
+                    <span className="material-symbols-outlined text-[36px]">add_a_photo</span>
+                  </div>
+                  <h3 className="font-headline-sm text-base font-bold text-on-surface mb-1">
+                    Add Dr. Ayazullah's Photo
+                  </h3>
+                  <p className="text-xs text-on-surface-variant max-w-[220px] mb-4">
+                    Click here or drag &amp; drop the doctor's photo
+                  </p>
+                  <span className="px-4 py-2 rounded-full bg-primary text-on-primary font-label-sm text-xs font-bold shadow hover:bg-primary-container transition-colors flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-[16px]">upload_file</span>
+                    <span>{isUploadingPhoto ? "Uploading..." : "Select Image"}</span>
+                  </span>
+                </div>
+              )}
+
+              {/* Doctor Tag Overlay - Clean Dr. Ayazullah + DPT (IU) */}
+              <div className="mt-4 sm:mt-0 sm:absolute sm:-bottom-5 sm:-right-4 bg-surface-container-lowest p-4 rounded-2xl shadow-xl flex items-center gap-3 border border-primary/20 z-20">
+                <div className="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-lg shadow-sm">
+                  Dr
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-headline-sm text-headline-sm text-on-surface font-bold">Dr. Ayazullah</span>
+                  <span className="font-label-sm text-xs text-primary font-bold">Degree: DPT (IU)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Bio, Degree, Certifications & Clinical Stats */}
+            <div className="lg:col-span-7 flex flex-col items-start gap-space-md">
+              
+              {/* Doctor Summary */}
+              <div className="flex flex-col gap-2">
+                <h3 className="font-headline-lg text-headline-lg text-on-surface font-bold">
+                  Expert Non-Surgical Musculoskeletal &amp; Sports Rehabilitation
                 </h3>
-                <p className="text-xs text-on-surface-variant max-w-[220px] mb-4">
-                  Click here or drag and drop the doctor's portrait image to display it in this box
+                <p className="font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+                  Dr. Ayazullah is a dedicated Consultant Physical Therapist committed to identifying and treating the root mechanical cause of pain. Utilizing advanced chiropractic techniques, biomechanical analysis, and targeted dry needling, he helps patients recover safely without unnecessary surgeries.
                 </p>
-                <span className="px-4 py-2 rounded-full bg-primary text-on-primary font-label-sm text-xs font-bold shadow hover:bg-primary-container transition-colors flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[16px]">upload_file</span>
-                  <span>{isUploadingPhoto ? "Uploading..." : "Select Image from Device"}</span>
+              </div>
+
+              {/* Academic Degree Section */}
+              <div className="w-full p-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-primary text-on-primary flex items-center justify-center shrink-0 shadow-sm">
+                    <span className="material-symbols-outlined text-[26px]">school</span>
+                  </div>
+                  <div>
+                    <span className="font-label-sm text-xs text-primary uppercase font-bold tracking-wider">Academic Degree</span>
+                    <h4 className="font-headline-sm text-headline-sm font-bold text-on-surface">DPT (IU)</h4>
+                    <p className="font-body-sm text-xs text-on-surface-variant">Doctor of Physical Therapy — Iqra University</p>
+                  </div>
+                </div>
+                <span className="hidden sm:inline-flex px-3 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-xs font-bold">
+                  Verified Qualification
                 </span>
               </div>
-            )}
 
-            <div className="absolute -bottom-6 -right-6 md:right-4 bg-surface-container-lowest p-space-md rounded-2xl shadow-xl flex items-center gap-space-sm border border-surface-container z-20">
-              <div className="flex flex-col">
-                <span className="font-headline-sm text-headline-sm text-on-surface font-bold">Dr. Ayazullah</span>
-                <span className="font-label-sm text-label-sm text-primary">Senior Physical Therapist</span>
-                <span className="font-body-sm text-[12px] text-on-surface-variant">DPT, MS-OMPT</span>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col items-start gap-space-md">
-            <span className="font-label-sm text-label-sm text-primary uppercase tracking-wider font-bold mb-1">Meet The Expert</span>
-            <h2 className="font-display-md text-display-md text-on-surface leading-tight">
-              Pioneering Patient-Centric Rehabilitation
-            </h2>
-            <p className="font-body-lg text-body-lg text-on-surface-variant">
-              Dr. Ayazullah is a distinguished Senior Consultant Physical Therapist specializing in Orthopedic Manual Physical Therapy. With a deep commitment to avoiding unnecessary surgeries, he utilizes advanced biomechanical analysis to treat the root causes of pain.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-md mt-space-sm w-full">
-              <div className="flex items-start gap-space-xs">
-                <span className="material-symbols-outlined text-primary text-[24px]">verified_user</span>
-                <div className="flex flex-col">
-                  <span className="font-label-md text-label-md text-on-surface font-bold">IFOMPT Member</span>
-                  <span className="font-body-sm text-body-sm text-on-surface-variant">Globally recognized standards</span>
+              {/* Certified Qualifications & Diplomas */}
+              <div className="w-full flex flex-col gap-2">
+                <span className="font-label-sm text-xs text-on-surface-variant uppercase tracking-wider font-bold">
+                  Professional Certifications &amp; Diplomas
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full">
+                  {[
+                    { title: "Certified Chiropractor", icon: "healing", desc: "Spinal & Joint Manipulations" },
+                    { title: "Dry Needling Practitioner", icon: "pin_invoke", desc: "Myofascial Pain Relief" },
+                    { title: "Certified K-Taping", icon: "accessibility", desc: "Kinematics & Muscle Taping" },
+                    { title: "Certified BLS", icon: "favorite", desc: "Basic Life Support" },
+                    { title: "FIFA Diploma in Football Medicine", icon: "sports_soccer", desc: "World Football Med" },
+                    { title: "World Rugby Level 1 Course", icon: "sports_rugby", desc: "Rugby Sports Rehabilitation" }
+                  ].map((cert, idx) => (
+                    <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-surface-container-lowest border border-surface-container shadow-xs hover:border-primary/40 transition-colors">
+                      <div className="w-9 h-9 rounded-lg bg-surface-container-high text-primary flex items-center justify-center shrink-0">
+                        <span className="material-symbols-outlined text-[20px]">{cert.icon}</span>
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="font-label-md text-sm font-bold text-on-surface truncate">{cert.title}</span>
+                        <span className="font-body-sm text-[11px] text-on-surface-variant truncate">{cert.desc}</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-              <div className="flex items-start gap-space-xs">
-                <span className="material-symbols-outlined text-primary text-[24px]">school</span>
-                <div className="flex flex-col">
-                  <span className="font-label-md text-label-md text-on-surface font-bold">Clinical Fellowship</span>
-                  <span className="font-body-sm text-body-sm text-on-surface-variant">Mentoring 400+ graduates</span>
+
+              {/* Clinical Achievements & Metrics */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 border-t border-surface-container w-full">
+                <div className="flex flex-col p-2.5 rounded-xl bg-surface-container-low">
+                  <span className="font-headline-md text-headline-md text-primary font-bold">{experienceDisplay}</span>
+                  <span className="font-label-sm text-[11px] text-on-surface-variant uppercase font-semibold">Clinical Exp.</span>
+                </div>
+                <div className="flex flex-col p-2.5 rounded-xl bg-surface-container-low">
+                  <span className="font-headline-md text-headline-md text-on-surface font-bold">{recoveriesDisplay}</span>
+                  <span className="font-label-sm text-[11px] text-on-surface-variant uppercase font-semibold">Recoveries</span>
+                </div>
+                <div className="flex flex-col p-2.5 rounded-xl bg-surface-container-low">
+                  <span className="font-headline-md text-headline-md text-secondary font-bold">400+</span>
+                  <span className="font-label-sm text-[11px] text-on-surface-variant uppercase font-semibold">Graduates Mentored</span>
+                </div>
+                <div className="flex flex-col p-2.5 rounded-xl bg-surface-container-low">
+                  <span className="font-headline-md text-headline-md text-tertiary font-bold">140k+</span>
+                  <span className="font-label-sm text-[11px] text-on-surface-variant uppercase font-semibold">Health Community</span>
                 </div>
               </div>
-              <div className="flex items-start gap-space-xs">
-                <span className="material-symbols-outlined text-primary text-[24px]">diversity_1</span>
-                <div className="flex flex-col">
-                  <span className="font-label-md text-label-md text-on-surface font-bold">Community Leader</span>
-                  <span className="font-body-sm text-body-sm text-on-surface-variant">140k+ digital health followers</span>
-                </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-space-sm pt-2 w-full">
+                <Link to="/book-appointment" className="px-space-xl py-space-sm rounded-full bg-primary text-on-primary hover:bg-primary-container font-label-lg text-label-lg font-bold shadow-md transition-all flex items-center gap-2">
+                  <span>Book Consultation with Dr. Ayazullah</span>
+                  <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+                </Link>
+                <Link to="/contact-us" className="px-space-lg py-space-sm rounded-full bg-surface-container-high text-on-surface hover:bg-surface-container-highest font-label-lg text-label-lg font-bold transition-colors">
+                  Contact Clinic
+                </Link>
               </div>
-            </div>
-            <div className="mt-space-md">
-              <Link to="/contact-us" className="px-space-lg py-space-sm rounded-full bg-surface-container-high text-on-surface hover:bg-primary hover:text-on-primary font-label-lg text-label-lg font-bold shadow-sm transition-colors flex items-center gap-space-xs">
-                Contact The Clinic
-              </Link>
+
             </div>
           </div>
         </div>
@@ -339,7 +416,7 @@ export default function Home() {
             <Link to="/book-appointment" className="px-space-xl h-14 rounded-full bg-on-primary text-primary font-label-lg text-label-lg font-bold shadow-lg hover:scale-105 transition-transform flex items-center justify-center gap-2">
               Book Assessment Now <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
             </Link>
-            <a href="tel:+923001234567" className="px-space-xl h-14 rounded-full border-2 border-primary-fixed text-primary-fixed hover:bg-primary-fixed hover:text-on-primary-fixed font-label-lg text-label-lg font-bold transition-colors flex items-center justify-center gap-space-xs">
+            <a href="tel:+923329895770" className="px-space-xl h-14 rounded-full border-2 border-primary-fixed text-primary-fixed hover:bg-primary-fixed hover:text-on-primary-fixed font-label-lg text-label-lg font-bold transition-colors flex items-center justify-center gap-space-xs">
               <span className="material-symbols-outlined text-[20px]">call</span>
               <span>Call Clinic Desk</span>
             </a>

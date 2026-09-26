@@ -32,7 +32,7 @@ IMPORTANT RULES:
 
 ### Clinic Specifications & Clinical Facts:
 1. Doctor Profile & Availability Schedule:
-   - Doctor: Dr. Ayazullah (Senior Consultant Physical Therapist, DPT, MS-OMPT, Certified Dry Needling Practitioner, IFOMPT Fellow).
+   - Doctor: Dr. Ayazullah (Consultant Physical Therapist, Degree: DPT (IU) Iqra University. Certifications: Certified Chiropractor, Dry Needling Practitioner, Certified K-Taping, Certified BLS, FIFA Diploma in Football Medicine, World Rugby Level 1 Course).
    - Experience: 3.5+ Years of specialized clinical practice.
    - Recoveries: Over 14,000+ documented patient recoveries across musculoskeletal, spinal decompression, and sports rehabilitation.
    - Rating: 4.9 / 5.0.

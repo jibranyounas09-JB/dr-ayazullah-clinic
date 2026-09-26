@@ -446,7 +446,7 @@ export default function AdminContent() {
                 </label>
                 <input 
                   type="text" 
-                  placeholder="e.g., +92 300 1234567" 
+                  placeholder="e.g., +92 332 9895770" 
                   value={emergencyPhone} 
                   onChange={(e) => setEmergencyPhone(e.target.value)}
                   className="w-full h-11 px-3.5 rounded-xl bg-surface-container-low border border-surface-container focus:outline-none focus:border-primary text-on-surface font-body-sm transition-colors" 

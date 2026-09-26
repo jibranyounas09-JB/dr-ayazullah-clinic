@@ -1,6 +1,4 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: any, res: any) {
   try {
     const { neonPool } = await import('../src/server/neonDb.js');
     const dbCheck = await neonPool.query("SELECT NOW() as now");
