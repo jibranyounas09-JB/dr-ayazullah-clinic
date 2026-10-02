@@ -276,7 +276,7 @@ export default function Layout() {
               <div className="flex flex-col gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
                 <div className="flex items-start gap-space-xs">
                   <span className="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">location_on</span>
-                  <span>Dr Ayazullah Physiotherapy and Sports Rehabilitation Clinic, Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad</span>
+                  <span>Dr Ayazullah Physiotherapy and Sports Rehabilitation Clinic, G-8 Markaz, Islamabad</span>
                 </div>
                 <div className="flex items-center gap-space-xs">
                   <span className="material-symbols-outlined text-primary text-[18px] shrink-0">support_agent</span>

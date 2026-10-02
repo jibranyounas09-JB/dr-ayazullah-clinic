@@ -10,7 +10,7 @@ export default function AdminSettings() {
     contactEmail: "drayazullahofficial1@gmail.com",
     emergencyPhone: "+92 332 9895770",
     whatsappDesk: "+92 332 9895770",
-    clinicAddress: "Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad",
+    clinicAddress: "G-8 Markaz, Islamabad",
     consultationFee: "PKR 3,000",
     easypaisaTitle: "Dr Ayazullah",
     easypaisaNumber: "0332 9895770",
@@ -73,7 +73,7 @@ export default function AdminSettings() {
         if (docSnap.exists()) {
           const data = docSnap.data() as any;
           if (!data.clinicAddress || data.clinicAddress.includes("MediCare")) {
-            data.clinicAddress = "Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad";
+            data.clinicAddress = "G-8 Markaz, Islamabad";
           }
           if (!data.clinicName || data.clinicName === "Dr. Ayazullah Physiotherapy") {
             data.clinicName = "Dr. Ayazullah Physiotherapy and Sports Rehabilitation Clinic";

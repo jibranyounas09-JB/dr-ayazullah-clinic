@@ -139,7 +139,7 @@ export async function initNeonDatabase() {
         dutyPhone: "+92 332 9895770",
         whatsappDesk: "+92 332 9895770",
         whatsappNumber: "+92 332 9895770",
-        clinicAddress: "Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad",
+        clinicAddress: "G-8 Markaz, Islamabad",
         consultationFee: 5000,
         currency: "PKR",
         easypaisaTitle: "Dr Ayazullah",

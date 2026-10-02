@@ -59,8 +59,8 @@ IMPORTANT RULES:
    - In Pashto: "زموږ د کلینیک کښې د فیلوشپ او لومړنۍ زده کړې (Internship) داخله خلاصه ده. د هغې باره کې په /internship-academy لینک معلومات او غوښتنلیک جمع کولی شئ."
 
 3. Clinic Location & Timings:
-   - Address: Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad, Pakistan.
-   - Urdu Address: آفس نمبر 12، پہلی منزل، پاک لینڈ پلازہ، جی ایٹ مرکز (G-8 Markaz)، اسلام آباد
+   - Address: G-8 Markaz, Islamabad, Pakistan.
+   - Urdu Address: جی ایٹ مرکز (G-8 Markaz)، اسلام آباد
    - Timings: Monday to Saturday, 10:00 AM – 08:00 PM (Closed on Sundays).
    - Special Clinic Day: Wednesday (بدھ) is Dr. Ayazullah's featured clinical consultation day.
    - WhatsApp / Phone: +92 332 9895770.

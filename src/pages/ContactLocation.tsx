@@ -31,7 +31,7 @@ export default function ContactLocation() {
   const emergencyPhone = settings?.emergencyPhone || "+92 332 9895770";
   const clinicAddress = (settings?.clinicAddress && !settings.clinicAddress.includes("MediCare"))
     ? settings.clinicAddress
-    : "Dr. Ayazullah Physiotherapy and Sports Rehabilitation Clinic\nOffice #12, 1st Floor, Pakland Plaza\nG-8 Markaz\nIslamabad, Pakistan";
+    : "Dr. Ayazullah Physiotherapy and Sports Rehabilitation Clinic\nG-8 Markaz\nIslamabad, Pakistan";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,7 +126,7 @@ export default function ContactLocation() {
                   <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold">Primary Practice Facility</h3>
                   <p className="font-body-sm text-body-sm text-on-surface-variant whitespace-pre-wrap">{clinicAddress}</p>
                 </div>
-                <a className="font-label-md text-label-md text-primary font-bold flex items-center gap-space-xxs hover:underline" href="https://www.google.com/maps/search/?api=1&query=Pakland+Plaza+G-8+Markaz+Islamabad" target="_blank" rel="noreferrer">
+                <a className="font-label-md text-label-md text-primary font-bold flex items-center gap-space-xxs hover:underline" href="https://www.google.com/maps/search/?api=1&query=G-8+Markaz+Islamabad" target="_blank" rel="noreferrer">
                   Open in Google Maps <span className="material-symbols-outlined text-[16px]">open_in_new</span>
                 </a>
               </div>
@@ -265,8 +265,8 @@ export default function ContactLocation() {
 
       <section className="w-full h-96 bg-surface-container-high relative overflow-hidden">
         <iframe
-          title="Dr. Ayazullah Clinic Location - Pakland Plaza G-8 Markaz Islamabad"
-          src="https://maps.google.com/maps?q=Pakland+Plaza+G-8+Markaz+Islamabad&t=&z=15&ie=UTF8&iwloc=&output=embed"
+          title="Dr. Ayazullah Clinic Location - G-8 Markaz Islamabad"
+          src="https://maps.google.com/maps?q=G-8+Markaz+Islamabad&t=&z=15&ie=UTF8&iwloc=&output=embed"
           className="w-full h-full border-0"
           loading="lazy"
           allowFullScreen
@@ -276,7 +276,7 @@ export default function ContactLocation() {
             <span className="material-symbols-outlined text-primary text-[16px]">local_parking</span> Parking
           </span>
           <span className="font-body-sm text-[12px] text-on-surface-variant mt-1 block">
-            Plaza and street parking available around Pakland Plaza, G-8 Markaz. Elevator &amp; stairs lead directly to 1st Floor, Office #12.
+            Plaza and street parking available around G-8 Markaz, Islamabad.
           </span>
         </div>
       </section>

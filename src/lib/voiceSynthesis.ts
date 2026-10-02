@@ -91,7 +91,6 @@ export function convertUrduScriptToRomanUrdu(text: string): string {
     .replace(/پتہ/g, "Pata")
     .replace(/آفس نمبر/g, "Office number")
     .replace(/پہلی منزل/g, "pehli manzil")
-    .replace(/پاک لینڈ پلازہ/g, "Pakland Plaza")
     .replace(/جی ایٹ مرکز/g, "G-8 Markaz")
     .replace(/اوقات/g, "Oqaat")
     .replace(/کلینیکل/g, "Clinical")

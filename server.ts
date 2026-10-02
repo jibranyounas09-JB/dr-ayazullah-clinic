@@ -237,7 +237,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
             </p>
             <p style="font-size: 14px; color: #64748b; margin-top: 32px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
               <strong>Dr. Ayazullah Physiotherapy and Sports Rehabilitation Clinic</strong><br/>
-              <span style="font-size: 12px; color: #94a3b8;">Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad</span>
+              <span style="font-size: 12px; color: #94a3b8;">G-8 Markaz, Islamabad</span>
             </p>
           </div>
         `;
@@ -257,11 +257,11 @@ app.use(express.static(path.join(process.cwd(), 'public')));
               <p style="margin: 0;"><strong>Status:</strong> Confirmed & Verified</p>
             </div>
             <p style="font-size: 16px; color: #475569; line-height: 1.6;">
-              Please arrive 5-10 minutes early for your session at our clinic: <strong>Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad</strong>. We look forward to seeing you.
+              Please arrive 5-10 minutes early for your session at our clinic: <strong>G-8 Markaz, Islamabad</strong>. We look forward to seeing you.
             </p>
             <p style="font-size: 14px; color: #64748b; margin-top: 32px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
               <strong>Dr. Ayazullah Physiotherapy and Sports Rehabilitation Clinic</strong><br/>
-              <span style="font-size: 12px; color: #94a3b8;">Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad</span>
+              <span style="font-size: 12px; color: #94a3b8;">G-8 Markaz, Islamabad</span>
             </p>
           </div>
         `;
@@ -343,7 +343,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
             <div style="border-top: 1px solid #e2e8f0; padding-top: 16px; margin-top: 24px; font-size: 13px; color: #94a3b8; text-align: center;">
               <p style="margin: 0 0 4px 0; font-weight: 600; color: #64748b;">Dr. Ayazullah Physiotherapy and Sports Rehabilitation Clinic</p>
-              <p style="margin: 0;">Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad • Contact: +92 332 9895770</p>
+              <p style="margin: 0;">G-8 Markaz, Islamabad • Contact: +92 332 9895770</p>
             </div>
           </div>
         `;
@@ -360,7 +360,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
             </p>
             <p style="font-size: 14px; color: #64748b; margin-top: 32px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
               <strong>Dr. Ayazullah Physiotherapy and Sports Rehabilitation Clinic</strong><br/>
-              <span style="font-size: 12px; color: #94a3b8;">Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad</span>
+              <span style="font-size: 12px; color: #94a3b8;">G-8 Markaz, Islamabad</span>
             </p>
           </div>
         `;
@@ -469,7 +469,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
             <div style="border-top: 1px solid #e2e8f0; padding-top: 18px; margin-top: 26px; font-size: 13px; color: #94a3b8; text-align: center;">
               <p style="margin: 0 0 4px 0; font-weight: 600; color: #64748b;">Dr. Ayazullah Physiotherapy and Sports Rehabilitation Clinic &amp; Internship Academy</p>
-              <p style="margin: 0 0 4px 0;">Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad • drayazullah.me</p>
+              <p style="margin: 0 0 4px 0;">G-8 Markaz, Islamabad • drayazullah.me</p>
               <p style="margin: 0;">Inquiries: +92 332 9895770</p>
             </div>
           </div>
@@ -509,7 +509,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
             <div style="border-top: 1px solid #e2e8f0; padding-top: 18px; margin-top: 26px; font-size: 13px; color: #94a3b8; text-align: center;">
               <p style="margin: 0 0 4px 0; font-weight: 600; color: #64748b;">Dr. Ayazullah Physiotherapy and Sports Rehabilitation Clinic</p>
-              <p style="margin: 0;">Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad • Contact: +92 332 9895770</p>
+              <p style="margin: 0;">G-8 Markaz, Islamabad • Contact: +92 332 9895770</p>
             </div>
           </div>
         `;
@@ -563,7 +563,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 
             <div style="border-top: 1px solid #e2e8f0; padding-top: 18px; margin-top: 26px; font-size: 13px; color: #94a3b8; text-align: center;">
               <p style="margin: 0 0 4px 0; font-weight: 600; color: #64748b;">Dr. Ayazullah Physiotherapy and Sports Rehabilitation Clinic</p>
-              <p style="margin: 0;">Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad • Contact: +92 332 9895770</p>
+              <p style="margin: 0;">G-8 Markaz, Islamabad • Contact: +92 332 9895770</p>
             </div>
           </div>
         `;
@@ -1087,7 +1087,7 @@ CRITICAL URDU LANGUAGE DIRECTIVE:
 - Clinical facts in Urdu:
   * بغیر آپریشن جدید ڈی کمپریشن تھراپی سے کمر درد، مہروں کا دبائو، سلپ ڈسک، عرق النساء (سیاٹیکا)، اور جوڑوں کے درد کا علاج
   * ابتدائی معائنہ فیس: ${formattedFeeUrdu} (جس میں تفصیلی 45 منٹ کلینیکل ٹریاج، تشخیصی رپورٹ اور فزیوتھراپی شامل ہے)
-  * پتہ: آفس نمبر 12، پہلی منزل، پاک لینڈ پلازہ، جی ایٹ مرکز (G-8 Markaz)، اسلام آباد
+  * پتہ: جی ایٹ مرکز (G-8 Markaz)، اسلام آباد
   * اوقات: پیر تا ہفتہ، صبح 10:00 بجے سے رات 08:00 بجے تک (اتوار چھٹی)
   * خصوصی دن: بدھ (Wednesday) ڈاکٹر ایاز اللہ کا خاص کلینیکل دن ہے
   * فون / واٹس ایپ: +92 332 9895770 (0332 9895770)
@@ -1106,7 +1106,7 @@ CRITICAL PASHTO LANGUAGE DIRECTIVE:
 - Clinical facts in Pashto:
   * د ملا درد، د مورو ډیسک، اوښتی هډوکی، سیټیکا (عرق النساء)، د زنګون درد او فالج بې له عملیاتو عصري درملنه
   * فیس: د تفصیلي معاینې او فزیوتراپي درملنې فیس ${consultationFee.toLocaleString()} روپۍ دی
-  * پته: دفتر نمبر ۱۲، لومړی پوړ، پاک لینډ پلازه، جي اېټ مرکز (G-8 Markaz)، اسلام آباد
+  * پته: جي اېټ مرکز (G-8 Markaz)، اسلام آباد
   * وختونه: د ګل نه تر خالي ورځې، د سهار ۱۰:۰۰ نه د ماښام تر ۰۸:۰۰ بجو پورې (یکشنبه رخصت دی)
   * د ډاکټر ایازالله ځانګړې ورځ: د شورو ورځ (Wednesday)
   * تیلیفون / واټس اپ: +92 332 9895770 (0332 9895770)
@@ -1385,7 +1385,7 @@ You can schedule your diagnostic assessment directly using the interactive menu 
 Lumbar disc herniation (L4-L5 / L5-S1) and sciatic nerve entrapping are highly treatable without surgery through targeted spinal realignment.
 
 • **Decompression Protocol:** Alleviates pressure on entrapped nerve roots for rapid pain reduction.
-• **Location:** Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad.
+• **Location:** G-8 Markaz, Islamabad.
 • **Consultation Fee:** ${formattedFee}
 
 Use the interactive booking form right below to reserve your clinical session.`;
@@ -1403,11 +1403,11 @@ For stroke survivors and nerve injury cases, we employ neuro-plasticity principl
 
 • **Specialized Neuro Session:** 60-minute targeted physical rehabilitation.
 • **Consultation Fee:** ${formattedFee}
-• **Location:** Pakland Plaza, G-8 Markaz, Islamabad.`;
+• **Location:** G-8 Markaz, Islamabad.`;
           } else if (isTimingsLocation) {
             aiResponseText = `**Clinic Timings & Physical Address:** 📍
 
-• **Address:** Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad, Pakistan.
+• **Address:** G-8 Markaz, Islamabad, Pakistan.
 • **Hours:** Monday to Saturday, 10:00 AM – 08:00 PM (Closed Sundays).
 • **Featured Day:** Wednesday is Dr. Ayazullah's main clinical diagnostic day.
 • **Phone / WhatsApp:** +92 332 9895770`;
@@ -1433,7 +1433,7 @@ Apply online and submit your CV dossier at /internship-academy.`;
             aiResponseText = `**Dr. Ayazullah Physiotherapy Clinic Consultation Booking** 🩺
 
 • **Initial Consultation Fee:** ${formattedFee} (Includes 45-minute diagnostic triage + physical therapy).
-• **Address:** Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad.
+• **Address:** G-8 Markaz, Islamabad.
 • **Hours:** Mon – Sat, 10:00 AM – 08:00 PM (Wednesday is Dr. Ayazullah's featured clinical day).
 
 💡 **Book Now:** Use the **Interactive Booking Form** right below to choose your therapy, day, slot, and submit your receipt!`;

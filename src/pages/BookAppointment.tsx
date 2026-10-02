@@ -9,7 +9,7 @@ import { PaymentMethodConfig, DEFAULT_PAYMENT_METHODS } from "../types/payment";
 export default function BookAppointment() {
   const [currentCategory, setCurrentCategory] = useState("");
   const [currentFee, setCurrentFee] = useState("");
-  const [currentMode, setCurrentMode] = useState("In-Clinic (Pakland Plaza G-8)");
+  const [currentMode, setCurrentMode] = useState("In-Clinic (G-8 Markaz)");
   const [duration, setDuration] = useState("Acute (< 2 Weeks)");
   const [painLevel, setPainLevel] = useState(5);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -259,7 +259,7 @@ export default function BookAppointment() {
                   <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
                   Live Clinical Intake
                 </span>
-                <span className="font-label-sm text-label-sm text-on-surface-variant">Pakland Plaza • 1st Floor, Office #12, G-8 Markaz</span>
+                <span className="font-label-sm text-label-sm text-on-surface-variant">G-8 Markaz, Islamabad</span>
               </div>
               <h1 className="font-display-lg text-display-lg text-on-surface tracking-tight">
                 Patient Care Gateway: Book Your Assessment &amp; Therapy Session
@@ -458,7 +458,7 @@ export default function BookAppointment() {
                     </div>
                   </div>
                   <div className="flex items-center bg-surface-container p-1 rounded-full w-full md:w-auto">
-                    <button onClick={() => setCurrentMode("In-Clinic (Pakland Plaza G-8)")} className={clsx("flex-1 md:flex-none px-space-sm py-1 rounded-full font-label-md text-label-md transition-all", currentMode.includes("In-Clinic") ? "bg-primary text-on-primary font-semibold" : "text-on-surface hover:text-primary")}>
+                    <button onClick={() => setCurrentMode("In-Clinic (G-8 Markaz)")} className={clsx("flex-1 md:flex-none px-space-sm py-1 rounded-full font-label-md text-label-md transition-all", currentMode.includes("In-Clinic") ? "bg-primary text-on-primary font-semibold" : "text-on-surface hover:text-primary")}>
                       In-Clinic
                     </button>
                     <button onClick={() => setCurrentMode("Tele-Rehab Video Session")} className={clsx("flex-1 md:flex-none px-space-sm py-1 rounded-full font-label-md text-label-md transition-all", !currentMode.includes("In-Clinic") ? "bg-primary text-on-primary font-semibold" : "text-on-surface hover:text-primary")}>
@@ -979,7 +979,7 @@ export default function BookAppointment() {
                    <div className="flex flex-col">
                       <span className="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">Clinical Triage Ticket</span>
                       <span className="font-label-sm text-label-sm text-primary font-semibold mt-0.5">Dr. Ayazullah Physiotherapy &amp; Sports Rehabilitation Clinic</span>
-                      <span className="font-body-sm text-[11px] text-on-surface-variant">Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad</span>
+                      <span className="font-body-sm text-[11px] text-on-surface-variant">G-8 Markaz, Islamabad</span>
                    </div>
                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary shrink-0">
                       <span className="material-symbols-outlined text-[24px]">verified</span>
@@ -1039,7 +1039,7 @@ export default function BookAppointment() {
                          clinicName: generalSettings?.clinicName || 'Dr. Ayazullah Physiotherapy and Sports Rehabilitation Clinic',
                          clinicAddress: (generalSettings?.clinicAddress && !generalSettings.clinicAddress.includes("MediCare"))
                            ? generalSettings.clinicAddress
-                           : 'Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad',
+                           : 'G-8 Markaz, Islamabad',
                          clinicPhone: generalSettings?.whatsappDesk || generalSettings?.contactPhone || generalSettings?.dutyPhone
                        });
                      }}

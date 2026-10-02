@@ -60,7 +60,7 @@ export function generateAppointmentPDF(data: AppointmentSlipData) {
   // Clinic Details in Header
   doc.setFontSize(7.5);
   doc.setTextColor(200, 225, 215);
-  const addressLine = data.clinicAddress || "Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad";
+  const addressLine = data.clinicAddress || "G-8 Markaz, Islamabad";
   const phoneLine = `Contact: ${data.clinicPhone || "+92 332 9895770"} | Email: drayazullahofficial1@gmail.com`;
   doc.text(addressLine, margin, 31);
   doc.text(phoneLine, margin, 36);
@@ -298,7 +298,7 @@ export function generateAppointmentPDF(data: AppointmentSlipData) {
   doc.setTextColor(100, 110, 120);
   doc.text("Consultant Physiotherapist & Clinical Director", margin + 120, y + 24);
   doc.text("Dr. Ayazullah Physiotherapy & Sports Rehabilitation Clinic", margin + 120, y + 28);
-  doc.text("Office #12, 1st Floor, Pakland Plaza, G-8 Markaz, Islamabad", margin + 120, y + 32);
+  doc.text("G-8 Markaz, Islamabad", margin + 120, y + 32);
 
   // Security Stamp / Barcode representation
   doc.setFont("courier", "normal");
